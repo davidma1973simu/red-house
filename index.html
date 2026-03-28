@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red House · 场景化业务赋能训战平台</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red-900: #7f1d1d;
+      --red-800: #991b1b;
+      --red-700: #b91c1c;
+      --red-600: #dc2626;
+      --red-500: #ef4444;
+      --red-400: #f87171;
+      --red-100: #fee2e2;
+      --red-50:  #fef2f2;
+      --slate-950: #0a0a0f;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --white: #ffffff;
+      --gold: #d4a843;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+      background: var(--slate-950);
+      color: var(--slate-200);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(10,10,15,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(220,38,38,0.18);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 32px; height: 32px;
+      background: var(--red-700);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 900; color: #fff;
+      letter-spacing: -1px;
+      box-shadow: 0 0 16px rgba(220,38,38,0.4);
+    }
+    .nav-logo-text {
+      font-size: 17px; font-weight: 800;
+      color: var(--white); letter-spacing: 0.5px;
+    }
+    .nav-logo-text span { color: var(--red-500); }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 13.5px; color: var(--slate-400); text-decoration: none;
+      font-weight: 500; letter-spacing: 0.3px;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      background: var(--red-700);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 6px;
+      font-weight: 600 !important;
+      transition: background .2s !important;
+    }
+    .nav-cta:hover { background: var(--red-600) !important; color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative; overflow: hidden;
+      text-align: center;
+    }
+    .hero-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(185,28,28,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(127,29,29,0.12) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(220,38,38,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(220,38,38,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 0%, transparent 100%);
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(185,28,28,0.15);
+      border: 1px solid rgba(220,38,38,0.3);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 12.5px; font-weight: 600;
+      color: var(--red-400); letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 28px;
+      position: relative;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--red-500);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.8); }
+    }
+    .hero-title {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .hero-title .brand {
+      color: var(--red-500);
+      display: inline-block;
+    }
+    .hero-title .line2 {
+      display: block;
+      font-size: clamp(28px, 3.5vw, 48px);
+      color: var(--slate-300);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-top: 6px;
+    }
+    .hero-sub {
+      font-size: clamp(15px, 1.6vw, 18px);
+      color: var(--slate-400);
+      max-width: 600px;
+      line-height: 1.8;
+      margin: 20px auto 40px;
+      position: relative;
+    }
+    .hero-sub strong { color: var(--slate-200); font-weight: 600; }
+    .hero-actions {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      position: relative;
+    }
+    .btn-primary {
+      background: var(--red-700);
+      color: #fff;
+      border: none; border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--red-600);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 28px rgba(220,38,38,0.4);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--slate-300);
+      border: 1px solid var(--slate-700);
+      border-radius: 8px;
+      padding: 14px 32px;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-secondary:hover { border-color: var(--slate-500); color: var(--white); }
+
+    /* ── STATS ── */
+    .stats-bar {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 0;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.02);
+      padding: 32px 48px;
+      margin: 0;
+    }
+    .stat-item {
+      flex: 1; min-width: 160px;
+      text-align: center;
+      padding: 0 32px;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 36px; font-weight: 900;
+      color: var(--red-500);
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 12.5px; color: var(--slate-400);
+      margin-top: 5px; letter-spacing: 0.3px;
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 96px 48px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11.5px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1.5px; color: var(--red-500);
+      margin-bottom: 16px;
+    }
+    .section-tag::before {
+      content: ''; width: 20px; height: 2px; background: var(--red-600);
+    }
+    .section-title {
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 900; color: var(--white);
+      letter-spacing: -0.8px; line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 15.5px; color: var(--slate-400);
+      max-width: 560px; line-height: 1.75;
+    }
+
+    /* ── PROCESS ── */
+    #process { background: var(--slate-900); }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      margin-top: 56px;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .process-step {
+      background: var(--slate-800);
+      padding: 36px 28px;
+      position: relative;
+      transition: background .2s;
+    }
+    .process-step:hover { background: #1e2a3b; }
+    .process-step-num {
+      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      color: var(--red-700); text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .process-step-icon {
+      font-size: 28px; margin-bottom: 14px;
+    }
+    .process-step-name {
+      font-size: 18px; font-weight: 800; color: var(--white);
+      margin-bottom: 6px;
+    }
+    .process-step-en {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      color: var(--red-600); text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .process-step-desc {
+      font-size: 13px; color: var(--slate-400); line-height: 1.65;
+    }
+    .process-step-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px;
+    }
+    .process-tag {
+      font-size: 11px; padding: 3px 9px;
+      background: rgba(220,38,38,0.1);
+      border: 1px solid rgba(220,38,38,0.2);
+      border-radius: 4px; color: var(--red-400);
+    }
+    /* connector arrow */
+    .process-step:not(:last-child)::after {
+      content: '›';
+      position: absolute; right: -14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px; color: var(--slate-600);
+      z-index: 2;
+    }
+
+    /* ── VALUE PROPS ── */
+    #value { background: var(--slate-950); }
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .value-card {
+      background: var(--slate-800);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 32px;
+      transition: border-color .2s, transform .2s;
+    }
+    .value-card:hover {
+      border-color: rgba(220,38,38,0.3);
+      transform: translateY(-2px);
+    }
+    .value-card-icon {
+      width: 48px; height: 48px;
+      background: rgba(185,28,28,0.15);
+      border: 1px solid rgba(220,38,38,0.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+    .value-card-title {
+      font-size: 17px; font-weight: 800; color: var(--white);
+      margin-bottom: 10px;
+    }
+    .value-card-desc {
+      font-size: 13.5px; color: var(--slate-400); line-height: 1.7;
+    }
+    .value-card-metric {
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--red-400);
+      font-weight: 600;
+    }
+
+    /* ── WHO ── */
+    #who { background: var(--slate-900); }
+    .who-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .who-card {
+      background: var(--slate-800);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+    }
+    .who-role {
+      font-size: 16px; font-weight: 800; color: var(--white);
+      margin-bottom: 8px;
+    }
+    .who-desc {
+      font-size: 13px; color: var(--slate-400); line-height: 1.65;
+      margin-bottom: 16px;
+    }
+    .who-gains { list-style: none; }
+    .who-gains li {
+      font-size: 12.5px; color: var(--slate-300);
+      padding: 5px 0;
+      display: flex; align-items: flex-start; gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .who-gains li:last-child { border-bottom: none; }
+    .who-gains li::before {
+      content: '▸'; color: var(--red-600); flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── CTA SECTION ── */
+    #cta {
+      background: linear-gradient(135deg, var(--red-900) 0%, #3b0b0b 50%, var(--slate-900) 100%);
+      text-align: center;
+      padding: 96px 48px;
+      position: relative; overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, rgba(220,38,38,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-title {
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 900; color: var(--white);
+      letter-spacing: -1px; line-height: 1.2;
+      margin-bottom: 16px; position: relative;
+    }
+    .cta-sub {
+      font-size: 16px; color: rgba(255,255,255,0.65);
+      max-width: 480px; margin: 0 auto 40px;
+      line-height: 1.7; position: relative;
+    }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; position: relative; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--slate-950);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 40px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo {
+      font-size: 15px; font-weight: 800; color: var(--slate-400);
+    }
+    .footer-logo span { color: var(--red-600); }
+    .footer-copy {
+      font-size: 12px; color: var(--slate-600);
+    }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a {
+      font-size: 12.5px; color: var(--slate-600);
+      text-decoration: none; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--slate-400); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 64px 20px; }
+      .hero { padding: 100px 20px 60px; }
+      .stats-bar { padding: 24px 20px; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 16px 0; }
+      .stat-item:last-child { border-bottom: none; }
+      footer { padding: 28px 20px; flex-direction: column; align-items: flex-start; }
+      #cta { padding: 64px 20px; }
+      .process-step::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">RH</div>
+    <span class="nav-logo-text">Red <span>House</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#process">设计流程</a></li>
+    <li><a href="#value">核心价值</a></li>
+    <li><a href="#who">适用人群</a></li>
+    <li><a href="#cta" class="nav-cta">开始使用 →</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-eyebrow">场景化业务赋能训战平台</div>
+
+  <h1 class="hero-title">
+    <span class="brand">Red House</span>
+    <span class="line2">让每位人才发展专家<br>都能独立设计训战课程</span>
+  </h1>
+
+  <p class="hero-sub">
+    基于 <strong>DIY 自助设计</strong> 理念，整合 AI 大模型与专业方法论，
+    帮助企业内部人才发展专家、内训师、HRBP 在
+    <strong>3–5 天内</strong>从零开发一套
+    定制化、场景化、可交付的模拟训战课程。
+  </p>
+
+  <div class="hero-actions">
+    <a href="app.html" class="btn-primary">
+      ▶ 开始设计我的课程
+    </a>
+    <a href="#process" class="btn-secondary">
+      了解设计流程 ↓
+    </a>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">3–5<small style="font-size:18px;font-weight:700">天</small></div>
+    <div class="stat-label">从零到可交付原型</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">3</div>
+    <div class="stat-label">核心设计阶段</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">AI</div>
+    <div class="stat-label">全程智能辅助</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">100<small style="font-size:18px;font-weight:700">%</small></div>
+    <div class="stat-label">业务场景定制化</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">0</div>
+    <div class="stat-label">专业课程开发背景要求</div>
+  </div>
+</div>
+
+<!-- ── PROCESS ── -->
+<section id="process">
+  <div class="section-inner">
+    <div class="section-tag">设计流程</div>
+    <h2 class="section-title">三步完成一套训战课程</h2>
+    <p class="section-desc">
+      从业务问题出发，逐步聚焦到可执行的学习体验，
+      每个阶段都有 AI 辅助和结构化模板支撑。
+    </p>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="process-step-num">阶段 01</div>
+        <div class="process-step-icon">🔎</div>
+        <div class="process-step-name">洞察定义</div>
+        <div class="process-step-en">Understand</div>
+        <div class="process-step-desc">
+          从业务目标和绩效差距出发，洞察核心能力缺口，定义目标学员、
+          发展目标与高绩效行为清单。
+        </div>
+        <div class="process-step-tags">
+          <span class="process-tag">绩效洞察</span>
+          <span class="process-tag">发展目标</span>
+          <span class="process-tag">赋能定义</span>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="process-step-num">阶段 02</div>
+        <div class="process-step-icon">🏗️</div>
+        <div class="process-step-name">模拟设计</div>
+        <div class="process-step-en">Build</div>
+        <div class="process-step-desc">
+          基于 7 要素画布，设计背景场景、业务挑战与决策情境，
+          整合教学活动形成可交付的课程原型。
+        </div>
+        <div class="process-step-tags">
+          <span class="process-tag">场景设计</span>
+          <span class="process-tag">挑战设计</span>
+          <span class="process-tag">体验设计</span>
+        </div>
+      </div>
+
+      <div class="process-step">
+        <div class="process-step-num">阶段 03</div>
+        <div class="process-step-icon">✅</div>
+        <div class="process-step-name">原型验证</div>
+        <div class="process-step-en">Test</div>
+        <div class="process-step-desc">
+          首轮运行收集学员反馈，进行 ABCD 行为评估，
+          整合教学评价与迁移计划，输出最终可交付包。
+        </div>
+        <div class="process-step-tags">
+          <span class="process-tag">首轮运行</span>
+          <span class="process-tag">行为评估</span>
+          <span class="process-tag">迁移计划</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VALUE PROPS ── -->
+<section id="value">
+  <div class="section-inner">
+    <div class="section-tag">核心价值</div>
+    <h2 class="section-title">为什么选择 Red House</h2>
+    <p class="section-desc">
+      对比传统外包开发方式，Red House 让企业内部团队真正掌握
+      场景化课程的设计与迭代能力。
+    </p>
+
+    <div class="value-grid">
+      <div class="value-card">
+        <div class="value-card-icon">⚡</div>
+        <div class="value-card-title">快速交付，持续迭代</div>
+        <div class="value-card-desc">
+          传统场景化课程开发需要 3–6 个月，Red House 将周期压缩至
+          3–5 天。业务变化时随时更新，课程始终与业务同步。
+        </div>
+        <div class="value-card-metric">↓ 90% 开发周期</div>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🎯</div>
+        <div class="value-card-title">100% 业务场景定制</div>
+        <div class="value-card-desc">
+          不使用通用案例，而是基于企业自身的业务挑战、决策场景和
+          最佳实践，萃取设计真实有效的学习情境。
+        </div>
+        <div class="value-card-metric">↑ 学员行为转化率</div>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🤖</div>
+        <div class="value-card-title">AI 全程辅助设计</div>
+        <div class="value-card-desc">
+          每个设计环节都有 AI 大模型提供内容建议、场景生成与结构优化，
+          让没有课程开发背景的专家也能产出高质量设计。
+        </div>
+        <div class="value-card-metric">零专业背景门槛</div>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">📦</div>
+        <div class="value-card-title">标准化产出，可规模交付</div>
+        <div class="value-card-desc">
+          每个阶段都有结构化产出物：洞察报告、课程原型、主持人手册、
+          评估工具包，直接支撑内部 TTT 和规模化交付。
+        </div>
+        <div class="value-card-metric">完整交付物包</div>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">💰</div>
+        <div class="value-card-title">大幅降低人才发展成本</div>
+        <div class="value-card-desc">
+          自主开发替代外部专家，内部能力沉淀后可反复复用，
+          单次开发成本降低 60–80%，长期成本优势显著。
+        </div>
+        <div class="value-card-metric">↓ 60–80% 开发成本</div>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon">🔄</div>
+        <div class="value-card-title">内部能力持续沉淀</div>
+        <div class="value-card-desc">
+          每次使用 Red House 完成的项目，都在积累企业独有的场景素材库、
+          行为标准库，形成竞争壁垒，而非依赖外部顾问。
+        </div>
+        <div class="value-card-metric">企业内部知识资产</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHO ── -->
+<section id="who">
+  <div class="section-inner">
+    <div class="section-tag">适用人群</div>
+    <h2 class="section-title">为人才发展专业人士而设计</h2>
+    <p class="section-desc">
+      无论你的角色和起点，Red House 都为你量身设计了
+      清晰的使用路径和支撑工具。
+    </p>
+
+    <div class="who-grid">
+      <div class="who-card">
+        <div class="who-role">🏢 企业培训负责人 / TD 负责人</div>
+        <div class="who-desc">
+          需要快速响应业务部门的赋能需求，在有限预算内交出高质量的
+          定制化学习解决方案。
+        </div>
+        <ul class="who-gains">
+          <li>快速对齐业务目标与学习需求</li>
+          <li>产出有说服力的洞察定义报告</li>
+          <li>降低外部开发依赖和成本</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-role">👩‍🏫 内训师 / 课程开发人员</div>
+        <div class="who-desc">
+          希望将自身的业务经验转化为高体验的场景化课程，
+          但缺少系统性的教学设计方法和工具。
+        </div>
+        <ul class="who-gains">
+          <li>结构化的课程设计框架和模板</li>
+          <li>AI 辅助场景内容生成</li>
+          <li>拓展专业领域，提升可雇佣性</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-role">🔗 HRBP / 业务合作伙伴</div>
+        <div class="who-desc">
+          深度嵌入业务团队，需要快速萃取业务最佳实践并
+          设计成可复制的赋能工具和工作坊。
+        </div>
+        <ul class="who-gains">
+          <li>实时萃取高绩效行为和最佳实践</li>
+          <li>快速设计可现场交付的学习活动</li>
+          <li>支撑业务变革中的团队赋能</li>
+        </ul>
+      </div>
+      <div class="who-card">
+        <div class="who-role">🎓 人才发展专家 / LXD</div>
+        <div class="who-desc">
+          具备一定的学习设计背景，希望将专业能力升级，
+          掌握场景化模拟训战这一高价值的设计交付方法。
+        </div>
+        <ul class="who-gains">
+          <li>掌握完整的模拟训战设计方法论</li>
+          <li>从讲授式课程转型为体验式课程</li>
+          <li>建立个人高辨识度的专业能力</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <h2 class="cta-title">准备好开始你的<br>第一个训战课程了吗？</h2>
+  <p class="cta-sub">
+    只需回答几个关于你业务的问题，AI 和 Red House 的设计流程
+    会引导你完成剩下的一切。
+  </p>
+  <div class="cta-actions">
+    <a href="app.html" class="btn-primary">▶ 立即开始设计</a>
+    <a href="#process" class="btn-secondary">查看设计流程</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Red <span>House</span> © 2026</div>
+  <div class="footer-links">
+    <a href="#">设计流程</a>
+    <a href="#">使用指南</a>
+    <a href="#">联系我们</a>
+  </div>
+  <div class="footer-copy">场景化业务赋能训战平台 · 专为人才发展专业人士设计</div>
+</footer>
+
+<script>
+  // 平滑滚动已用 CSS scroll-behavior 处理
+  // 未来可在此处初始化应用入口
+  console.log('Red House v0.1.0 — Phase 0');
+</script>
+</body>
+</html>

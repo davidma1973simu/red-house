@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red House · 设计工作台</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --red-900:#7f1d1d; --red-800:#991b1b; --red-700:#b91c1c;
+      --red-600:#dc2626; --red-500:#ef4444; --red-400:#f87171;
+      --red-200:#fecaca; --red-100:#fee2e2;
+      --slate-950:#0a0a0f; --slate-900:#0f172a; --slate-800:#1e293b;
+      --slate-750:#243044; --slate-700:#334155; --slate-600:#475569;
+      --slate-500:#64748b; --slate-400:#94a3b8; --slate-300:#cbd5e1;
+      --slate-200:#e2e8f0; --slate-100:#f1f5f9;
+      --white:#ffffff;
+      --sidebar-w:260px;
+      --amber-500:#f59e0b; --amber-400:#fbbf24;
+      --emerald-500:#10b981; --emerald-400:#34d399;
+    }
+    html,body { height:100%; }
+    body {
+      font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Helvetica Neue',sans-serif;
+      background:var(--slate-950); color:var(--slate-200);
+      -webkit-font-smoothing:antialiased;
+      display:flex; flex-direction:column;
+    }
+
+    /* ══ TOP NAV ══ */
+    .topnav {
+      height:52px; flex-shrink:0;
+      background:rgba(10,10,15,0.96);
+      border-bottom:1px solid rgba(220,38,38,0.18);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 20px; gap:16px;
+      position:sticky; top:0; z-index:200;
+    }
+    .topnav-left { display:flex; align-items:center; gap:14px; }
+    .nav-logo-wrap { display:flex; align-items:center; gap:8px; text-decoration:none; }
+    .nav-icon {
+      width:28px; height:28px; background:var(--red-700); border-radius:5px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:900; color:#fff;
+      box-shadow:0 0 12px rgba(220,38,38,0.35);
+    }
+    .nav-name { font-size:13.5px; font-weight:800; color:var(--white); white-space:nowrap; }
+    .nav-name span { color:var(--red-500); }
+    .nav-sep { width:1px; height:20px; background:rgba(255,255,255,0.08); }
+    .nav-page-title { font-size:13px; color:var(--slate-400); font-weight:500; }
+    .topnav-right { display:flex; align-items:center; gap:10px; }
+    .btn-sm {
+      font-size:12.5px; font-weight:600; padding:6px 14px;
+      border-radius:6px; cursor:pointer; text-decoration:none;
+      border:none; transition:background .18s, color .18s;
+    }
+    .btn-ghost { background:transparent; color:var(--slate-400); border:1px solid var(--slate-700); }
+    .btn-ghost:hover { background:var(--slate-800); color:var(--slate-200); }
+    .btn-red { background:var(--red-700); color:#fff; }
+    .btn-red:hover { background:var(--red-600); }
+
+    /* ══ AI STATUS ══ */
+    #ai-status-bar {
+      display:flex; align-items:center; gap:6px;
+      font-size:11.5px; color:var(--slate-600);
+      cursor:pointer; padding:5px 10px; border-radius:6px;
+      transition:background .15s;
+    }
+    #ai-status-bar:hover { background:var(--slate-800); }
+    #ai-dot { width:7px; height:7px; border-radius:50%; background:var(--slate-600); transition:background .3s; }
+    #ai-dot.on { background:#4ade80; box-shadow:0 0 6px rgba(74,222,128,0.5); }
+
+    /* ══ LAYOUT ══ */
+    .app-body { display:flex; flex:1; overflow:hidden; }
+
+    /* ══ SIDEBAR ══ */
+    .sidebar {
+      width:var(--sidebar-w); flex-shrink:0;
+      background:var(--slate-900);
+      border-right:1px solid rgba(255,255,255,0.06);
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+    .sidebar-header { padding:16px 16px 12px; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .sidebar-search {
+      width:100%; padding:7px 12px;
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.08);
+      border-radius:7px; color:var(--slate-200); font-size:12.5px;
+      outline:none; transition:border-color .18s;
+    }
+    .sidebar-search::placeholder { color:var(--slate-600); }
+    .sidebar-search:focus { border-color:rgba(220,38,38,0.4); }
+    .sidebar-label {
+      font-size:10.5px; font-weight:700; letter-spacing:1.2px;
+      text-transform:uppercase; color:var(--slate-600);
+      padding:14px 16px 6px;
+    }
+    .project-list { flex:1; overflow-y:auto; padding:4px 8px 16px; }
+    .project-list::-webkit-scrollbar { width:4px; }
+    .project-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+    .project-item {
+      padding:10px 10px; border-radius:8px; cursor:pointer;
+      transition:background .15s; margin-bottom:2px; position:relative;
+    }
+    .project-item:hover { background:var(--slate-800); }
+    .project-item.active { background:rgba(185,28,28,0.15); border:1px solid rgba(220,38,38,0.2); }
+    .project-item-name {
+      font-size:13px; font-weight:600; color:var(--slate-200);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px;
+    }
+    .project-item.active .project-item-name { color:var(--red-400); }
+    .project-item-meta { display:flex; align-items:center; gap:8px; }
+    .stage-badge {
+      font-size:10px; font-weight:700; padding:1px 7px;
+      border-radius:3px; letter-spacing:0.4px;
+    }
+    .badge-insight  { background:rgba(59,130,246,0.15); color:#60a5fa; }
+    .badge-design   { background:rgba(245,158,11,0.15); color:#fbbf24; }
+    .badge-validate { background:rgba(16,185,129,0.15); color:#34d399; }
+    .project-date { font-size:10.5px; color:var(--slate-600); }
+    .sidebar-new-btn {
+      margin:0 12px 12px;
+      width:calc(100% - 24px); padding:9px;
+      border:1px dashed rgba(220,38,38,0.3);
+      background:transparent; border-radius:8px;
+      color:var(--red-500); font-size:13px; font-weight:600;
+      cursor:pointer; transition:background .18s, border-color .18s;
+      display:flex; align-items:center; justify-content:center; gap:6px;
+    }
+    .sidebar-new-btn:hover { background:rgba(185,28,28,0.1); border-color:var(--red-600); }
+
+    /* ══ MAIN ══ */
+    .main { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+    .main::-webkit-scrollbar { width:6px; }
+    .main::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:3px; }
+
+    /* ══ VIEWS ══ */
+    .view { display:none; flex:1; flex-direction:column; }
+    .view.active { display:flex; }
+
+    /* Welcome */
+    #view-welcome {
+      align-items:center; justify-content:center;
+      text-align:center; padding:60px 40px;
+    }
+    .welcome-icon { font-size:56px; margin-bottom:20px; }
+    .welcome-title { font-size:26px; font-weight:900; color:var(--white); margin-bottom:10px; }
+    .welcome-sub { font-size:14.5px; color:var(--slate-400); max-width:420px; line-height:1.75; margin-bottom:32px; }
+
+    /* ══ PROJECT VIEW ══ */
+    #view-project { padding:0; }
+
+    .project-header {
+      padding:24px 36px 0;
+      background:var(--slate-900);
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+    .project-header-top {
+      display:flex; align-items:flex-start; justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .project-title { font-size:21px; font-weight:900; color:var(--white); margin-bottom:3px; }
+    .project-subtitle { font-size:13px; color:var(--slate-500); }
+    .project-actions { display:flex; gap:8px; flex-shrink:0; }
+
+    /* ══ PHASE TABS (3大环节) ══ */
+    .phase-tabs {
+      display:flex; gap:0;
+      border-bottom:none;
+    }
+    .phase-tab {
+      padding:12px 28px;
+      font-size:13.5px; font-weight:700;
+      color:var(--slate-500); cursor:pointer;
+      border-bottom:2px solid transparent;
+      transition:color .18s, border-color .18s, background .18s;
+      display:flex; align-items:center; gap:8px;
+      white-space:nowrap;
+      background:none; border-top:none; border-left:none; border-right:none;
+      position:relative;
+    }
+    .phase-tab:hover { color:var(--slate-200); background:rgba(255,255,255,0.03); }
+    .phase-tab.active { color:var(--white); border-bottom-color:var(--red-600); }
+    .phase-tab .phase-num {
+      width:20px; height:20px; border-radius:50%;
+      background:var(--slate-700); color:var(--slate-400);
+      font-size:10px; font-weight:800;
+      display:flex; align-items:center; justify-content:center;
+      transition:background .18s, color .18s;
+    }
+    .phase-tab.active .phase-num { background:var(--red-800); color:var(--red-300); }
+    .phase-tab.done .phase-num { background:rgba(16,185,129,0.2); color:var(--emerald-400); }
+
+    /* ══ PHASE CONTENT ══ */
+    .phase-content { flex:1; padding:0 36px 40px; }
+    .phase-panel { display:none; }
+    .phase-panel.active { display:block; }
+
+    /* ══ PHASE INFO BANNER（顶部：只展示目标+模块任务）══ */
+    .phase-info-banner {
+      padding:28px 0 28px;
+      border-bottom:2px solid rgba(220,38,38,0.2);
+      margin-bottom:36px;
+      display:grid;
+      grid-template-columns:1fr 1.6fr;
+      gap:0;
+      background:linear-gradient(135deg,rgba(127,29,29,0.07) 0%,rgba(15,23,42,0) 100%);
+      border-radius:8px 8px 0 0;
+      padding-left:4px;
+    }
+    .pib-cell {
+      padding:0 28px;
+      border-right:1px solid rgba(255,255,255,0.06);
+    }
+    .pib-cell:first-child { padding-left:8px; }
+    .pib-cell:last-child { border-right:none; }
+    .pib-label {
+      font-size:11px; font-weight:800; letter-spacing:1.5px;
+      text-transform:uppercase; color:var(--red-500);
+      margin-bottom:10px;
+    }
+    .pib-goal-text {
+      font-size:15px; font-weight:600; color:var(--white);
+      line-height:1.7;
+    }
+    .pib-goal-text em {
+      font-style:normal;
+      color:var(--red-400);
+      font-weight:700;
+    }
+    .pib-modules {
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .pib-module-row {
+      display:flex; align-items:baseline; gap:10px;
+    }
+    .pib-module-name {
+      font-size:13.5px; font-weight:800; color:var(--white);
+      white-space:nowrap; min-width:64px;
+    }
+    .pib-module-tasks {
+      font-size:12.5px; color:var(--slate-400); line-height:1.6;
+    }
+    .pib-module-tasks b { color:var(--slate-300); }
+
+    /* ══ PHASE FOOTER（底部：输入来源 + 关键产出）══ */
+    .phase-footer-banner {
+      margin-top:48px;
+      padding:22px 24px;
+      border:1px solid rgba(255,255,255,0.05);
+      border-top:2px solid rgba(255,255,255,0.07);
+      border-radius:0 0 8px 8px;
+      background:rgba(15,23,42,0.5);
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px;
+    }
+    .pfb-cell {}
+    .pfb-label {
+      font-size:10px; font-weight:800; letter-spacing:1.5px;
+      text-transform:uppercase; color:var(--slate-600);
+      margin-bottom:10px;
+    }
+    .pfb-tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .pib-tag {
+      display:inline-block; font-size:11.5px; font-weight:600;
+      padding:4px 10px; border-radius:5px;
+      background:rgba(185,28,28,0.1); color:var(--red-400);
+      border:1px solid rgba(185,28,28,0.22);
+    }
+    .pib-tag-out {
+      display:inline-block; font-size:11.5px; font-weight:600;
+      padding:4px 10px; border-radius:5px;
+      background:rgba(16,185,129,0.08); color:#34d399;
+      border:1px solid rgba(16,185,129,0.2);
+    }
+
+    /* ══ TASK CARD 输入/产出 ══ */
+    .task-io-row {
+      margin-top:10px; padding-top:10px;
+      border-top:1px solid rgba(255,255,255,0.05);
+    }
+    .task-io-label {
+      font-size:9.5px; font-weight:800; letter-spacing:1px;
+      text-transform:uppercase; color:var(--slate-600);
+      margin-bottom:5px;
+    }
+    .task-io-item {
+      display:inline-flex; align-items:center; gap:4px;
+      font-size:11px; color:var(--slate-400);
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.06);
+      border-radius:4px; padding:2px 7px;
+      margin:2px 2px 2px 0;
+    }
+    .task-io-item.input::before { content:'↘'; font-size:9px; color:var(--slate-500); }
+    .task-io-item.output::before { content:'◆'; font-size:7px; color:var(--red-700); }
+
+    /* ══ MODULE SECTIONS ══ */
+    .module-section {
+      margin-bottom:48px;
+    }
+    .module-section:last-child { margin-bottom:0; }
+
+    .module-header {
+      display:flex; align-items:center; gap:14px;
+      margin-bottom:20px; padding-bottom:14px;
+      border-bottom:1px solid rgba(255,255,255,0.06);
+    }
+    .module-index {
+      width:32px; height:32px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:900; flex-shrink:0;
+    }
+    .module-1 .module-index { background:rgba(59,130,246,0.15); color:#60a5fa; }
+    .module-2 .module-index { background:rgba(245,158,11,0.15); color:#fbbf24; }
+    .module-3 .module-index { background:rgba(16,185,129,0.15); color:#34d399; }
+    .module-title-group {}
+    .module-title {
+      font-size:16px; font-weight:800; color:var(--white);
+      margin-bottom:2px;
+    }
+    .module-desc { font-size:12.5px; color:var(--slate-500); line-height:1.5; }
+    .module-progress {
+      margin-left:auto; display:flex; align-items:center; gap:6px;
+      font-size:11.5px; color:var(--slate-600); flex-shrink:0;
+    }
+    .module-progress-dots { display:flex; gap:4px; }
+    .prog-dot {
+      width:8px; height:8px; border-radius:50%;
+      background:var(--slate-700);
+      transition:background .2s;
+    }
+    .prog-dot.done { background:var(--red-600); }
+    .prog-dot.active { background:var(--red-400); box-shadow:0 0 5px rgba(239,68,68,0.4); }
+
+    /* ══ TASK CARDS ══ */
+    .task-cards {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    @media (max-width:1100px) { .task-cards { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:740px)  { .task-cards { grid-template-columns:1fr; } }
+
+    .task-card {
+      background:var(--slate-800);
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px;
+      overflow:hidden;
+      transition:border-color .2s, box-shadow .2s;
+      cursor:pointer;
+      display:flex; flex-direction:column;
+      position:relative;
+    }
+    .task-card:hover {
+      border-color:rgba(220,38,38,0.25);
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    }
+    .task-card.active-card {
+      border-color:var(--red-700);
+      box-shadow:0 0 0 1px rgba(185,28,28,0.3), 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .task-card.locked {
+      opacity:0.45; cursor:not-allowed;
+    }
+    .task-card.locked:hover { border-color:rgba(255,255,255,0.07); box-shadow:none; }
+
+    .task-card-header {
+      padding:16px 18px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .task-badge {
+      font-size:9.5px; font-weight:800; letter-spacing:1px;
+      text-transform:uppercase; padding:3px 8px; border-radius:4px;
+      flex-shrink:0; margin-top:1px;
+    }
+    .task-badge-todo    { background:rgba(255,255,255,0.06); color:var(--slate-500); }
+    .task-badge-active  { background:rgba(185,28,28,0.2); color:var(--red-400); }
+    .task-badge-done    { background:rgba(16,185,129,0.15); color:#34d399; }
+    .task-badge-locked  { background:rgba(255,255,255,0.04); color:var(--slate-600); }
+
+    .task-num {
+      font-size:10px; font-weight:800; letter-spacing:0.8px;
+      color:var(--slate-600); text-transform:uppercase;
+    }
+    .task-card-body { padding:14px 18px 16px; flex:1; }
+    .task-name {
+      font-size:14.5px; font-weight:800; color:var(--white);
+      margin-bottom:7px; line-height:1.35;
+    }
+    .task-desc {
+      font-size:12.5px; color:var(--slate-500);
+      line-height:1.65; margin-bottom:14px;
+    }
+    .task-output-label {
+      font-size:10.5px; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.8px; color:var(--slate-600); margin-bottom:5px;
+    }
+    .task-output-item {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:11.5px; color:var(--slate-400);
+      background:rgba(255,255,255,0.04); border-radius:5px;
+      padding:3px 8px; margin:2px 2px 2px 0;
+    }
+    .task-output-item::before { content:'◆'; font-size:7px; color:var(--red-700); }
+    .task-card-footer {
+      padding:10px 18px;
+      border-top:1px solid rgba(255,255,255,0.05);
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .task-cta {
+      font-size:12px; font-weight:700; color:var(--red-500);
+      background:none; border:none; cursor:pointer;
+      display:flex; align-items:center; gap:5px;
+      padding:0; transition:color .15s;
+    }
+    .task-cta:hover { color:var(--red-400); }
+    .task-cta-arrow { transition:transform .15s; }
+    .task-card:hover .task-cta-arrow { transform:translateX(3px); }
+    .task-locked-msg {
+      font-size:11.5px; color:var(--slate-600);
+      display:flex; align-items:center; gap:5px;
+    }
+
+    /* ══ TASK WORKSPACE PANEL ══ */
+    .workspace-overlay {
+      position:fixed; inset:0; z-index:300;
+      background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);
+      display:none; align-items:flex-start; justify-content:flex-end;
+    }
+    .workspace-overlay.open { display:flex; }
+    .workspace-panel {
+      width:min(820px, 92vw);
+      height:100%;
+      background:var(--slate-900);
+      border-left:1px solid rgba(255,255,255,0.08);
+      display:flex; flex-direction:column;
+      overflow:hidden;
+      transform:translateX(100%);
+      transition:transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .workspace-overlay.open .workspace-panel { transform:translateX(0); }
+    .ws-header {
+      padding:20px 24px 16px;
+      border-bottom:1px solid rgba(255,255,255,0.07);
+      flex-shrink:0;
+    }
+    .ws-breadcrumb {
+      font-size:11px; color:var(--slate-600); margin-bottom:6px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .ws-breadcrumb span { color:var(--slate-500); }
+    .ws-title {
+      font-size:18px; font-weight:900; color:var(--white);
+      margin-bottom:3px;
+    }
+    .ws-subtitle { font-size:12.5px; color:var(--slate-500); }
+    .ws-close {
+      position:absolute; top:16px; right:20px;
+      background:none; border:none; color:var(--slate-500);
+      font-size:20px; cursor:pointer; padding:4px 8px;
+      border-radius:6px; transition:background .15s, color .15s;
+      z-index:10;
+    }
+    .ws-close:hover { background:var(--slate-800); color:var(--white); }
+    .ws-body {
+      flex:1; overflow-y:auto; padding:24px;
+    }
+    .ws-body::-webkit-scrollbar { width:5px; }
+    .ws-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:3px; }
+    .ws-footer {
+      padding:14px 24px;
+      border-top:1px solid rgba(255,255,255,0.07);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; flex-shrink:0;
+    }
+    .ws-save-status { font-size:12px; color:var(--slate-600); }
+    .ws-save-status.saved { color:#4ade80; }
+    .ws-actions { display:flex; gap:10px; }
+
+    /* ══ WORKSPACE CONTENT COMPONENTS ══ */
+    .ws-placeholder {
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; text-align:center;
+      min-height:300px; gap:14px; color:var(--slate-600);
+    }
+    .ws-placeholder .ph-icon { font-size:44px; }
+    .ws-placeholder h3 { font-size:16px; font-weight:700; color:var(--slate-500); }
+    .ws-placeholder p { font-size:13px; max-width:300px; line-height:1.65; }
+    .ws-coming-soon {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:700; padding:5px 12px;
+      border-radius:20px; background:var(--slate-800);
+      border:1px solid rgba(255,255,255,0.07); color:var(--slate-500);
+      letter-spacing:0.5px;
+    }
+
+    /* Form elements */
+    .field-group { margin-bottom:20px; }
+    .field-label {
+      font-size:11.5px; font-weight:700; text-transform:uppercase;
+      letter-spacing:0.8px; color:var(--slate-400); margin-bottom:6px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .field-required { color:var(--red-500); }
+    .field-hint { font-size:11.5px; color:var(--slate-600); margin-bottom:6px; line-height:1.55; }
+    .field-input, .field-textarea {
+      width:100%; padding:10px 14px;
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.08);
+      border-radius:8px; color:var(--slate-100); font-size:13.5px;
+      font-family:inherit; outline:none; transition:border-color .18s; resize:vertical;
+    }
+    .field-input:focus, .field-textarea:focus { border-color:rgba(220,38,38,0.4); }
+    .field-textarea { min-height:90px; }
+    .field-row { display:flex; gap:10px; align-items:flex-start; }
+    .field-row .field-input, .field-row .field-textarea { flex:1; }
+    .ai-btn {
+      flex-shrink:0; padding:10px 14px;
+      background:rgba(185,28,28,0.15); border:1px solid rgba(220,38,38,0.25);
+      border-radius:8px; color:var(--red-400); font-size:12px; font-weight:700;
+      cursor:pointer; white-space:nowrap; transition:background .18s;
+      display:flex; align-items:center; gap:5px;
+    }
+    .ai-btn:hover { background:rgba(185,28,28,0.28); }
+    .ai-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .spinner { display:none; width:12px; height:12px; border:2px solid rgba(239,68,68,0.3); border-top-color:var(--red-400); border-radius:50%; animation:spin .7s linear infinite; }
+    .ai-btn.loading .spinner { display:block; }
+    .ai-btn.loading .btn-label { display:none; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* Section divider */
+    .ws-section {
+      margin-bottom:28px;
+    }
+    .ws-section-title {
+      font-size:13px; font-weight:800; color:var(--white);
+      margin-bottom:4px; display:flex; align-items:center; gap:8px;
+    }
+    .ws-section-title::after {
+      content:''; flex:1; height:1px; background:rgba(255,255,255,0.06);
+    }
+    .ws-section-desc { font-size:12px; color:var(--slate-500); margin-bottom:14px; line-height:1.6; }
+
+    /* ══ BUTTONS ══ */
+    .btn-outline {
+      padding:8px 18px; border-radius:7px; font-size:13px; font-weight:600;
+      background:transparent; border:1px solid var(--slate-700);
+      color:var(--slate-300); cursor:pointer; transition:border-color .18s;
+    }
+    .btn-outline:hover { border-color:var(--slate-500); color:var(--white); }
+    .btn-primary {
+      padding:8px 20px; border-radius:7px; font-size:13px; font-weight:700;
+      background:var(--red-700); border:none; color:#fff;
+      cursor:pointer; transition:background .18s;
+    }
+    .btn-primary:hover { background:var(--red-600); }
+
+    /* ══ 预先研究 专属样式 ══ */
+
+    /* 输入区网格 */
+    .pr-input-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:14px; margin-bottom:6px;
+    }
+    .pr-input-card {
+      background:var(--slate-800);
+      border:1px solid rgba(255,255,255,0.07);
+      border-radius:10px; padding:14px 16px;
+    }
+    .pr-input-label {
+      font-size:10px; font-weight:800; letter-spacing:1.2px;
+      text-transform:uppercase; color:var(--red-400);
+      margin-bottom:6px; display:flex; align-items:center; gap:6px;
+    }
+    .pr-input-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:16px; height:16px; background:var(--red-700);
+      border-radius:50%; font-size:9px; font-weight:900; color:#fff; flex-shrink:0;
+    }
+    .pr-input-card input,
+    .pr-input-card textarea {
+      width:100%; background:transparent; border:none; border-bottom:1px solid rgba(255,255,255,0.08);
+      color:var(--slate-100); font-size:13px; font-family:inherit;
+      padding:4px 0 6px; outline:none; resize:none; line-height:1.6;
+    }
+    .pr-input-card input::placeholder,
+    .pr-input-card textarea::placeholder { color:var(--slate-700); font-size:12.5px; }
+    .pr-input-card input:focus,
+    .pr-input-card textarea:focus { border-bottom-color:rgba(220,38,38,0.45); }
+    .pr-input-card textarea { min-height:62px; }
+
+    /* AI 分析触发条 */
+    .pr-analyze-bar {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:16px; padding:14px 18px;
+      background:linear-gradient(90deg,rgba(127,29,29,0.2) 0%,rgba(185,28,28,0.1) 100%);
+      border:1px solid rgba(220,38,38,0.2); border-radius:10px;
+      margin-bottom:6px;
+    }
+    .pr-analyze-hint { font-size:12.5px; color:var(--slate-400); line-height:1.5; }
+    .pr-analyze-hint b { color:var(--white); }
+    .pr-analyze-btn {
+      flex-shrink:0; padding:9px 22px;
+      background:var(--red-700); border:none; border-radius:8px;
+      color:#fff; font-size:13px; font-weight:700;
+      cursor:pointer; transition:background .18s;
+      display:flex; align-items:center; gap:8px; white-space:nowrap;
+    }
+    .pr-analyze-btn:hover { background:var(--red-600); }
+    .pr-analyze-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .pr-analyze-btn .btn-spinner {
+      display:none; width:14px; height:14px;
+      border:2px solid rgba(255,255,255,0.25);
+      border-top-color:#fff; border-radius:50%;
+      animation:spin .7s linear infinite;
+    }
+    .pr-analyze-btn.running .btn-spinner { display:block; }
+    .pr-analyze-btn.running .btn-label { display:none; }
+
+    /* 进度状态条 */
+    .pr-progress-bar {
+      display:none; padding:12px 18px;
+      background:rgba(15,23,42,0.8);
+      border:1px solid rgba(255,255,255,0.06); border-radius:10px;
+      margin-bottom:6px; align-items:center; gap:14px;
+    }
+    .pr-progress-bar.visible { display:flex; }
+    .pr-progress-track {
+      flex:1; height:4px; background:rgba(255,255,255,0.07);
+      border-radius:2px; overflow:hidden;
+    }
+    .pr-progress-fill {
+      height:100%; width:0%; background:var(--red-600);
+      border-radius:2px;
+      transition:width .5s ease;
+    }
+    .pr-progress-text {
+      font-size:12px; color:var(--slate-400); white-space:nowrap;
+    }
+
+    /* 三维分析维度 */
+    .pr-dims {
+      display:grid; grid-template-columns:1fr 1fr 1fr;
+      gap:10px; margin-bottom:6px;
+    }
+    .pr-dim-card {
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.06);
+      border-radius:10px; padding:14px;
+      opacity:0.35; transition:opacity .4s;
+    }
+    .pr-dim-card.lit { opacity:1; border-color:rgba(220,38,38,0.18); }
+    .pr-dim-icon { font-size:22px; margin-bottom:8px; }
+    .pr-dim-title { font-size:11.5px; font-weight:800; color:var(--white); margin-bottom:6px; }
+    .pr-dim-body { font-size:11.5px; color:var(--slate-400); line-height:1.65; min-height:60px; }
+
+    /* 3 WHYs 洞察卡片 */
+    .pr-whys {
+      display:flex; flex-direction:column; gap:12px; margin-bottom:6px;
+    }
+    .pr-why-card {
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.06);
+      border-radius:10px; padding:16px 18px;
+      display:flex; gap:14px; align-items:flex-start;
+      opacity:0.3; transition:opacity .4s;
+    }
+    .pr-why-card.lit { opacity:1; border-color:rgba(220,38,38,0.2); }
+    .pr-why-badge {
+      flex-shrink:0; width:48px; height:48px;
+      background:linear-gradient(135deg,var(--red-800),var(--red-700));
+      border-radius:10px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-size:8.5px; font-weight:900; color:rgba(255,255,255,0.7);
+      letter-spacing:0.5px; line-height:1.3; text-align:center;
+    }
+    .pr-why-badge span { font-size:14px; font-weight:900; color:#fff; }
+    .pr-why-q { font-size:11.5px; font-weight:700; color:var(--slate-500); margin-bottom:5px; }
+    .pr-why-a { font-size:13px; color:var(--slate-200); line-height:1.65; }
+
+    /* 优先排序表 */
+    .pr-output-section {
+      opacity:0.3; transition:opacity .4s;
+    }
+    .pr-output-section.lit { opacity:1; }
+    .pr-priority-table {
+      width:100%; border-collapse:collapse;
+      font-size:12.5px; margin-bottom:14px;
+    }
+    .pr-priority-table th {
+      background:rgba(127,29,29,0.3); color:var(--red-200);
+      font-size:10.5px; font-weight:800; letter-spacing:1px;
+      text-transform:uppercase; padding:10px 14px; text-align:left;
+      border-bottom:1px solid rgba(185,28,28,0.3);
+    }
+    .pr-priority-table td {
+      padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.04);
+      color:var(--slate-300); vertical-align:top; line-height:1.6;
+    }
+    .pr-priority-table tr:last-child td { border-bottom:none; }
+    .pr-priority-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .pr-rank {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:24px; height:24px; border-radius:50%;
+      font-size:11px; font-weight:900; color:#fff;
+    }
+    .pr-rank.r1 { background:var(--red-700); }
+    .pr-rank.r2 { background:rgba(185,28,28,0.55); }
+    .pr-rank.r3 { background:rgba(185,28,28,0.35); }
+    .pr-rank.r4 { background:rgba(71,85,105,0.6); }
+    .pr-rank.r5 { background:rgba(71,85,105,0.4); }
+    .pr-kpi-tag {
+      display:inline-block; font-size:11px; font-weight:600;
+      padding:2px 8px; border-radius:4px;
+      background:rgba(16,185,129,0.08); color:#34d399;
+      border:1px solid rgba(16,185,129,0.18);
+      margin:2px 2px 2px 0;
+    }
+
+    /* 操作按钮行 */
+    .pr-action-row {
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;
+    }
+    .pr-action-btn {
+      padding:9px 18px; border-radius:8px; font-size:12.5px; font-weight:700;
+      cursor:pointer; transition:all .18s;
+      display:flex; align-items:center; gap:7px; border:1px solid;
+    }
+    .pr-action-btn.download {
+      background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25);
+      color:#34d399;
+    }
+    .pr-action-btn.download:hover { background:rgba(16,185,129,0.2); }
+    .pr-action-btn.next {
+      background:var(--red-700); border-color:var(--red-700); color:#fff;
+    }
+    .pr-action-btn.next:hover { background:var(--red-600); border-color:var(--red-600); }
+
+    /* ══ MODAL ══ */
+    .modal-overlay {
+      position:fixed; inset:0; z-index:500;
+      background:rgba(0,0,0,0.7); backdrop-filter:blur(4px);
+      display:none; align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--slate-900); border:1px solid rgba(255,255,255,0.08);
+      border-radius:14px; padding:32px; width:480px; max-width:90vw;
+      position:relative;
+    }
+    .modal-title { font-size:18px; font-weight:900; color:var(--white); margin-bottom:6px; }
+    .modal-sub { font-size:13px; color:var(--slate-500); margin-bottom:24px; }
+    .modal-field { margin-bottom:16px; }
+    .modal-field label {
+      display:block; font-size:12px; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.7px;
+      color:var(--slate-400); margin-bottom:6px;
+    }
+    .modal-field input, .modal-field select, .modal-field textarea {
+      width:100%; padding:10px 14px;
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px; color:var(--slate-100); font-size:13.5px;
+      font-family:inherit; outline:none;
+    }
+    .modal-field input:focus, .modal-field select:focus { border-color:rgba(220,38,38,0.4); }
+    .modal-field select { appearance:none; cursor:pointer; }
+    .modal-field textarea { resize:vertical; min-height:80px; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:24px; }
+    .modal-close {
+      position:absolute; top:14px; right:16px;
+      background:none; border:none; color:var(--slate-500);
+      font-size:20px; cursor:pointer; padding:4px 8px; border-radius:6px;
+    }
+    .modal-close:hover { background:var(--slate-800); color:var(--white); }
+
+    /* ══ AI SETTINGS MODAL ══ */
+    #ai-modal .modal { width:520px; }
+    .ai-provider-row { display:flex; gap:10px; margin-bottom:16px; }
+    .ai-provider-btn {
+      flex:1; padding:10px; border-radius:8px; cursor:pointer;
+      border:1px solid rgba(255,255,255,0.08); background:var(--slate-800);
+      color:var(--slate-400); font-size:12.5px; font-weight:600;
+      transition:border-color .18s, color .18s, background .18s;
+      text-align:center;
+    }
+    .ai-provider-btn.selected {
+      border-color:var(--red-600); color:var(--red-400); background:rgba(185,28,28,0.12);
+    }
+
+    /* ══ TOAST ══ */
+    .toast {
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px);
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.1);
+      border-radius:10px; padding:10px 20px;
+      font-size:13px; color:var(--slate-200);
+      opacity:0; transition:opacity .25s, transform .25s;
+      z-index:9999; pointer-events:none; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.success { border-color:rgba(74,222,128,0.3); }
+    .toast.error { border-color:rgba(239,68,68,0.3); }
+  </style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="topnav-left">
+    <a href="index.html" class="nav-logo-wrap">
+      <div class="nav-icon">捷</div>
+      <span class="nav-name">捷迈 <span>·</span> 定制场景化业务赋能训战</span>
+    </a>
+    <div class="nav-sep"></div>
+    <span class="nav-page-title">设计工作台</span>
+  </div>
+  <div class="topnav-right">
+    <div id="ai-status-bar" onclick="openAIModal()">
+      <div id="ai-dot"></div>
+      <span id="ai-status-text">AI 未配置</span>
+    </div>
+    <a href="index.html" class="btn-sm btn-ghost">← 首页</a>
+  </div>
+</nav>
+
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <input class="sidebar-search" type="text" id="project-search" placeholder="搜索项目…" oninput="filterProjects(this.value)" />
+    </div>
+    <div class="sidebar-label">我的项目</div>
+    <div class="project-list" id="project-list"></div>
+    <button class="sidebar-new-btn" onclick="openNewModal()">＋ 新建项目</button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Welcome -->
+    <div class="view active" id="view-welcome">
+      <div class="welcome-icon">🏠</div>
+      <h1 class="welcome-title">开始你的训战设计</h1>
+      <p class="welcome-sub">从左侧选择一个已有项目继续，或新建一个项目开启你的场景化模拟训战课程开发之旅。</p>
+      <button class="btn-sm btn-red" onclick="openNewModal()">＋ 新建项目</button>
+    </div>
+
+    <!-- Project Workspace -->
+    <div class="view" id="view-project">
+
+      <!-- Project Header -->
+      <div class="project-header">
+        <div class="project-header-top">
+          <div class="project-title-group">
+            <div class="project-title" id="proj-title">项目名称</div>
+            <div class="project-subtitle" id="proj-subtitle">—</div>
+          </div>
+          <div class="project-actions">
+            <button class="btn-sm btn-ghost" onclick="deleteCurrentProject()">删除</button>
+            <button class="btn-sm btn-red" onclick="saveProject()">保存</button>
+          </div>
+        </div>
+
+        <!-- 3 大环节标签 -->
+        <div class="phase-tabs">
+          <button class="phase-tab active" data-phase="0" onclick="switchPhase(0)">
+            <span class="phase-num">1</span>
+            <span>洞察定义 <span style="font-weight:400;color:var(--slate-600);font-size:11px">Understand</span></span>
+          </button>
+          <button class="phase-tab" data-phase="1" onclick="switchPhase(1)">
+            <span class="phase-num">2</span>
+            <span>模拟设计 <span style="font-weight:400;color:var(--slate-600);font-size:11px">Build</span></span>
+          </button>
+          <button class="phase-tab" data-phase="2" onclick="switchPhase(2)">
+            <span class="phase-num">3</span>
+            <span>原型验证 <span style="font-weight:400;color:var(--slate-600);font-size:11px">Validate</span></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Phase Content -->
+      <div class="phase-content">
+
+        <!-- ══════════════════════════════════════
+             环节 1：洞察定义
+        ══════════════════════════════════════ -->
+        <div class="phase-panel active" id="phase-0">
+
+          <!-- 环节概览 Banner（只展示目标+模块任务）-->
+          <div class="phase-info-banner">
+            <div class="pib-cell">
+              <div class="pib-label">环节目标</div>
+              <div class="pib-goal-text">
+                从<em>业务问题</em>与<em>绩效差距</em>出发，<br/>洞察并定义关键行为能力清单，<br/>建立业务目标与赋能目标之间的逻辑关联
+              </div>
+            </div>
+            <div class="pib-cell">
+              <div class="pib-label">模块任务</div>
+              <div class="pib-modules">
+                <div class="pib-module-row">
+                  <span class="pib-module-name">绩效洞察</span>
+                  <span class="pib-module-tasks">预先研究 · 多维调研洞察 · 业务目标拆解</span>
+                </div>
+                <div class="pib-module-row">
+                  <span class="pib-module-name">发展目标</span>
+                  <span class="pib-module-tasks">目标学员画像 · 专家工作坊场景萃取 · 高绩效行为定义</span>
+                </div>
+                <div class="pib-module-row">
+                  <span class="pib-module-name">赋能定义</span>
+                  <span class="pib-module-tasks">业务赋能需求报告 · 概念设计评审</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模块 1：绩效洞察 -->
+          <div class="module-section module-1">
+            <div class="module-header">
+              <div class="module-index">1</div>
+              <div class="module-title-group">
+                <div class="module-title">绩效洞察</div>
+                <div class="module-desc">进行预先研究与多维度调研，将业务目标逐层拆解至个人发展目标</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot active" id="m0-d0"></div>
+                  <div class="prog-dot" id="m0-d1"></div>
+                  <div class="prog-dot" id="m0-d2"></div>
+                </div>
+                <span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <!-- 任务 1：预先研究 -->
+              <div class="task-card active-card" id="tc-0-0-0" onclick="openTask(0,0,0)">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·1·1</span>
+                  <span class="task-badge task-badge-active">进行中</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name">预先研究</div>
+                  <div class="task-desc">收集并整理业务背景资料，了解组织现状与绩效差距，为后续洞察访谈奠定基础。</div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">输入</div>
+                    <span class="task-io-item input">业务/战略目标</span>
+                    <span class="task-io-item input">组织架构</span>
+                    <span class="task-io-item input">现有文档资料</span>
+                  </div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">产出</div>
+                    <span class="task-io-item output">研究背景摘要</span>
+                    <span class="task-io-item output">关键问题清单</span>
+                  </div>
+                </div>
+                <div class="task-card-footer">
+                  <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
+                </div>
+              </div>
+              <!-- 任务 2：占位 -->
+              <div class="task-card locked" id="tc-0-0-1">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·1·2</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 完成任务1解锁</span>
+                </div>
+              </div>
+              <!-- 任务 3：占位 -->
+              <div class="task-card locked" id="tc-0-0-2">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·1·3</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 完成任务2解锁</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模块 2：发展目标 -->
+          <div class="module-section module-2">
+            <div class="module-header">
+              <div class="module-index">2</div>
+              <div class="module-title-group">
+                <div class="module-title">发展目标</div>
+                <div class="module-desc">构建目标学员画像，通过专家工作坊萃取高频场景与高绩效行为</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot" id="m1-d0"></div>
+                  <div class="prog-dot" id="m1-d1"></div>
+                  <div class="prog-dot" id="m1-d2"></div>
+                </div>
+                <span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked" id="tc-0-1-0">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·2·1</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成绩效洞察模块后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 完成模块1解锁</span>
+                </div>
+              </div>
+              <div class="task-card locked" id="tc-0-1-1">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·2·2</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 待解锁</span>
+                </div>
+              </div>
+              <div class="task-card locked" id="tc-0-1-2">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·2·3</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 待解锁</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 模块 3：赋能定义 -->
+          <div class="module-section module-3">
+            <div class="module-header">
+              <div class="module-index">3</div>
+              <div class="module-title-group">
+                <div class="module-title">赋能定义</div>
+                <div class="module-desc">产出业务赋能需求报告，完成概念设计方案并通过评审</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot" id="m2-d0"></div>
+                  <div class="prog-dot" id="m2-d1"></div>
+                  <div class="prog-dot" id="m2-d2"></div>
+                </div>
+                <span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked" id="tc-0-2-0">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·3·1</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成发展目标模块后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 完成模块2解锁</span>
+                </div>
+              </div>
+              <div class="task-card locked" id="tc-0-2-1">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·3·2</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 待解锁</span>
+                </div>
+              </div>
+              <div class="task-card locked" id="tc-0-2-2">
+                <div class="task-card-header">
+                  <span class="task-num">任务 1·3·3</span>
+                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                </div>
+                <div class="task-card-body">
+                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
+                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                </div>
+                <div class="task-card-footer">
+                  <span class="task-locked-msg">🔒 待解锁</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 环节底部：本环节所有输入来源 + 关键产出 -->
+          <div class="phase-footer-banner">
+            <div class="pfb-cell">
+              <div class="pfb-label">本环节输入来源</div>
+              <div class="pfb-tags">
+                <span class="pib-tag">业务 / 战略 / 变革目标</span>
+                <span class="pib-tag">高层期待与担心</span>
+                <span class="pib-tag">组织内部现状</span>
+                <span class="pib-tag">人才绩效现状</span>
+                <span class="pib-tag">行业对标</span>
+              </div>
+            </div>
+            <div class="pfb-cell">
+              <div class="pfb-label">本环节关键产出</div>
+              <div class="pfb-tags">
+                <span class="pib-tag-out">商业影响图</span>
+                <span class="pib-tag-out">赋能模块卡片 CASK</span>
+                <span class="pib-tag-out">高绩效行为清单</span>
+                <span class="pib-tag-out">高频通用典型场景</span>
+                <span class="pib-tag-out">赋能发展目标</span>
+                <span class="pib-tag-out">教学要点</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /phase-0 -->
+
+        <!-- ══════════════════════════════════════
+             环节 2：模拟设计（占位）
+        ══════════════════════════════════════ -->
+        <div class="phase-panel" id="phase-1">
+          <div class="module-section module-1">
+            <div class="module-header">
+              <div class="module-index">1</div>
+              <div class="module-title-group">
+                <div class="module-title">情境构建</div>
+                <div class="module-desc">设计真实还原工作场景的模拟情境框架</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·1·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成环节1后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 完成环节1解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·1·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·1·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+          <div class="module-section module-2">
+            <div class="module-header">
+              <div class="module-index">2</div>
+              <div class="module-title-group">
+                <div class="module-title">教学活动设计</div>
+                <div class="module-desc">规划导入、训练、复盘三段式教学活动序列</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·2·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成模块1后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·2·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·2·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+          <div class="module-section module-3">
+            <div class="module-header">
+              <div class="module-index">3</div>
+              <div class="module-title-group">
+                <div class="module-title">课程包打包</div>
+                <div class="module-desc">整合所有设计产出，形成可交付的完整课程包</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·3·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成模块2后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·3·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 2·3·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+        </div><!-- /phase-1 -->
+
+        <!-- ══════════════════════════════════════
+             环节 3：原型验证（占位）
+        ══════════════════════════════════════ -->
+        <div class="phase-panel" id="phase-2">
+          <div class="module-section module-1">
+            <div class="module-header">
+              <div class="module-index">1</div>
+              <div class="module-title-group">
+                <div class="module-title">试运行准备</div>
+                <div class="module-desc">完成首轮运行前的人员、材料与流程准备</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·1·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成环节2后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 完成环节2解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·1·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·1·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+          <div class="module-section module-2">
+            <div class="module-header">
+              <div class="module-index">2</div>
+              <div class="module-title-group">
+                <div class="module-title">行为评估</div>
+                <div class="module-desc">收集学员行为数据，评估训练效果与能力迁移情况</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·2·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成模块1后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·2·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·2·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+          <div class="module-section module-3">
+            <div class="module-header">
+              <div class="module-index">3</div>
+              <div class="module-title-group">
+                <div class="module-title">迭代优化</div>
+                <div class="module-desc">基于运行反馈持续改进课程，形成可规模化交付的成熟版本</div>
+              </div>
+              <div class="module-progress">
+                <div class="module-progress-dots">
+                  <div class="prog-dot"></div><div class="prog-dot"></div><div class="prog-dot"></div>
+                </div><span>0/3</span>
+              </div>
+            </div>
+            <div class="task-cards">
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·3·1</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成模块2后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·3·2</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+              <div class="task-card locked"><div class="task-card-header"><span class="task-num">任务 3·3·3</span><span class="task-badge task-badge-locked">🔒 待解锁</span></div><div class="task-card-body"><div class="task-name" style="color:var(--slate-600)">即将开放</div><div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div></div><div class="task-card-footer"><span class="task-locked-msg">🔒 待解锁</span></div></div>
+            </div>
+          </div>
+        </div><!-- /phase-2 -->
+
+      </div><!-- /phase-content -->
+    </div><!-- /view-project -->
+
+  </main>
+</div>
+
+<!-- ══ TASK WORKSPACE PANEL ══ -->
+<div class="workspace-overlay" id="workspace-overlay" onclick="closeWorkspaceOnBg(event)">
+  <div class="workspace-panel" id="workspace-panel">
+    <button class="ws-close" onclick="closeWorkspace()">✕</button>
+    <div class="ws-header">
+      <div class="ws-breadcrumb" id="ws-breadcrumb">—</div>
+      <div class="ws-title" id="ws-title">任务工作区</div>
+      <div class="ws-subtitle" id="ws-subtitle">—</div>
+    </div>
+    <div class="ws-body" id="ws-body">
+      <div class="ws-placeholder">
+        <div class="ph-icon">🚧</div>
+        <h3>任务内容建设中</h3>
+        <p>请告诉我这个任务的具体内容，我来为你搭建工作区界面。</p>
+        <span class="ws-coming-soon">⏳ 等待输入</span>
+      </div>
+    </div>
+    <div class="ws-footer">
+      <span class="ws-save-status" id="ws-save-status">—</span>
+      <div class="ws-actions">
+        <button class="btn-outline" onclick="closeWorkspace()">关闭</button>
+        <button class="btn-primary" onclick="saveWorkspace()">保存进度</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NEW PROJECT MODAL ══ -->
+<div class="modal-overlay" id="new-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeNewModal()">✕</button>
+    <div class="modal-title">新建项目</div>
+    <div class="modal-sub">填写基本信息，开始你的训战设计之旅</div>
+    <div class="modal-field">
+      <label>项目名称 <span style="color:var(--red-500)">*</span></label>
+      <input type="text" id="new-name" placeholder="例：销售团队新客开发能力赋能项目" />
+    </div>
+    <div class="modal-field">
+      <label>目标学员</label>
+      <input type="text" id="new-audience" placeholder="例：大客户销售经理" />
+    </div>
+    <div class="modal-field">
+      <label>业务背景</label>
+      <textarea id="new-context" placeholder="简要描述项目背景、业务痛点或发起原因…"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeNewModal()">取消</button>
+      <button class="btn-primary" onclick="createProject()">创建项目</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AI SETTINGS MODAL ══ -->
+<div class="modal-overlay" id="ai-modal">
+  <div class="modal" style="width:520px">
+    <button class="modal-close" onclick="closeAIModal()">✕</button>
+    <div class="modal-title">AI 配置</div>
+    <div class="modal-sub">配置后可在各任务中使用 AI 辅助生成内容</div>
+    <div class="modal-field">
+      <label>服务商</label>
+      <div class="ai-provider-row">
+        <button class="ai-provider-btn selected" id="prov-openai" onclick="selectProvider('openai')">OpenAI</button>
+        <button class="ai-provider-btn" id="prov-compatible" onclick="selectProvider('compatible')">兼容接口（DeepSeek / 通义等）</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>API Key</label>
+      <input type="password" id="ai-key" placeholder="sk-..." />
+    </div>
+    <div class="modal-field">
+      <label>模型</label>
+      <input type="text" id="ai-model" placeholder="gpt-4o" />
+    </div>
+    <div class="modal-field" id="endpoint-field" style="display:none">
+      <label>自定义端点</label>
+      <input type="text" id="ai-endpoint" placeholder="https://api.deepseek.com/v1/chat/completions" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeAIModal()">取消</button>
+      <button class="btn-primary" onclick="saveAIConfig()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════
+// DATA LAYER
+// ════════════════════════════════════════════
+const STORAGE_KEY = 'rh_projects_v1';
+const AI_KEY      = 'rh_ai_config_v1';
+
+function loadProjects() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function saveProjects(p) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+}
+function loadAI() {
+  try { return JSON.parse(localStorage.getItem(AI_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveAI(cfg) {
+  localStorage.setItem(AI_KEY, JSON.stringify(cfg));
+}
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let projects = loadProjects();
+let currentId = null;
+let activePhase = 0;
+let activeTask = null; // {phase, module, task}
+let dirty = false;
+
+// ════════════════════════════════════════════
+// SIDEBAR
+// ════════════════════════════════════════════
+function renderSidebar(filter='') {
+  const list = document.getElementById('project-list');
+  const fl = filter.toLowerCase();
+  const visible = projects.filter(p => !fl || p.name.toLowerCase().includes(fl));
+  if (!visible.length) {
+    list.innerHTML = `<div style="padding:20px 14px;font-size:12px;color:var(--slate-600);text-align:center">${filter ? '无匹配项目' : '暂无项目'}</div>`;
+    return;
+  }
+  list.innerHTML = visible.map(p => {
+    const phaseNames = ['洞察定义','模拟设计','原型验证'];
+    const phaseClass = ['badge-insight','badge-design','badge-validate'];
+    const ph = p.currentPhase || 0;
+    return `<div class="project-item${p.id===currentId?' active':''}" onclick="selectProject('${p.id}')">
+      <div class="project-item-name">${esc(p.name)}</div>
+      <div class="project-item-meta">
+        <span class="stage-badge ${phaseClass[ph]}">${phaseNames[ph]}</span>
+        <span class="project-date">${formatDate(p.updatedAt)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterProjects(v) { renderSidebar(v); }
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function formatDate(ts) {
+  if(!ts) return '—';
+  const d = new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+// ════════════════════════════════════════════
+// PROJECT CRUD
+// ════════════════════════════════════════════
+function selectProject(id) {
+  currentId = id;
+  const p = projects.find(x => x.id===id);
+  if(!p) return;
+  document.getElementById('view-welcome').classList.remove('active');
+  document.getElementById('view-project').classList.add('active');
+  // 标题：公司名高亮（取自预先研究输入）+ 固定后缀
+  const prData = (() => { try { return JSON.parse(localStorage.getItem('rh_pr_data_v1')||'{}'); } catch(e){ return {}; } })();
+  const companyRaw = (prData.industry || '').split(/[·\-\/，,]+/).pop().trim();
+  const company = companyRaw || p.name;
+  document.getElementById('proj-title').innerHTML =
+    `<span style="color:var(--red-400);font-weight:900">${esc(company)}</span>` +
+    `<span style="color:var(--slate-500);font-weight:500;font-size:15px;margin-left:8px">定制场景化业务赋能训战项目</span>`;
+  document.getElementById('proj-subtitle').textContent =
+    (p.audience ? `目标学员：${p.audience}` : '—') +
+    (p.context ? `　　${p.context.slice(0,40)}…` : '');
+  activePhase = p.currentPhase || 0;
+  switchPhase(activePhase);
+  renderSidebar();
+  dirty = false;
+}
+
+function switchPhase(idx) {
+  activePhase = idx;
+  document.querySelectorAll('.phase-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.phase-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+}
+
+function openNewModal() { document.getElementById('new-modal').classList.add('open'); setTimeout(()=>document.getElementById('new-name').focus(),100); }
+function closeNewModal() { document.getElementById('new-modal').classList.remove('open'); }
+
+function createProject() {
+  const name = document.getElementById('new-name').value.trim();
+  if(!name) { showToast('请填写项目名称','error'); return; }
+  const p = {
+    id: 'p_'+Date.now(),
+    name,
+    audience: document.getElementById('new-audience').value.trim(),
+    context: document.getElementById('new-context').value.trim(),
+    currentPhase: 0,
+    taskProgress: {},
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  projects.unshift(p);
+  saveProjects(projects);
+  closeNewModal();
+  document.getElementById('new-name').value='';
+  document.getElementById('new-audience').value='';
+  document.getElementById('new-context').value='';
+  selectProject(p.id);
+  showToast('项目已创建','success');
+}
+
+function saveProject() {
+  if(!currentId) return;
+  const idx = projects.findIndex(p=>p.id===currentId);
+  if(idx<0) return;
+  projects[idx].currentPhase = activePhase;
+  projects[idx].updatedAt = Date.now();
+  saveProjects(projects);
+  renderSidebar();
+  dirty = false;
+  showToast('已保存','success');
+}
+
+function deleteCurrentProject() {
+  if(!currentId) return;
+  if(!confirm('确定要删除这个项目吗？此操作不可撤销。')) return;
+  projects = projects.filter(p=>p.id!==currentId);
+  saveProjects(projects);
+  currentId = null;
+  document.getElementById('view-project').classList.remove('active');
+  document.getElementById('view-welcome').classList.add('active');
+  renderSidebar();
+  showToast('项目已删除');
+}
+
+// ════════════════════════════════════════════
+// TASK WORKSPACE
+// ════════════════════════════════════════════
+// Task metadata — 内容待填充
+const TASK_META = {
+  '0-0-0': {
+    name: '预先研究',
+    phase: '洞察定义', module: '绩效洞察', num: '1·1·1',
+    desc: '收集并整理业务背景资料，了解组织现状与绩效差距，为后续洞察访谈奠定基础。'
+  }
+  // 后续任务在此扩展
+};
+
+function openTask(phase, mod, task) {
+  const key = `${phase}-${mod}-${task}`;
+  const meta = TASK_META[key];
+  if(!meta) return; // 未定义的任务暂不响应
+
+  activeTask = {phase, mod, task, key};
+
+  document.getElementById('ws-breadcrumb').innerHTML =
+    `环节${phase+1} · <span>${meta.phase}</span> &nbsp;/&nbsp; 模块${mod+1} · <span>${meta.module}</span>`;
+  document.getElementById('ws-title').textContent = `${meta.num}  ${meta.name}`;
+  document.getElementById('ws-subtitle').textContent = meta.desc;
+  document.getElementById('ws-save-status').textContent = '—';
+  document.getElementById('ws-save-status').className = 'ws-save-status';
+
+  // 渲染工作区内容
+  document.getElementById('ws-body').innerHTML = renderTaskContent(key);
+
+  document.getElementById('workspace-overlay').classList.add('open');
+}
+
+function renderTaskContent(key) {
+  if (key === '0-0-0') return renderPreResearch();
+  return `<div class="ws-placeholder">
+    <div class="ph-icon">🚧</div>
+    <h3>即将开放</h3>
+    <p>此任务工作区内容建设中。</p>
+    <span class="ws-coming-soon">⏳ 等待输入</span>
+  </div>`;
+}
+
+// ────────────────────────────────────────────
+// 任务 1·1·1 预先研究
+// ────────────────────────────────────────────
+function renderPreResearch() {
+  // 读取已保存的数据
+  const saved = (() => {
+    try { return JSON.parse(localStorage.getItem('rh_pr_data_v1') || '{}'); } catch(e) { return {}; }
+  })();
+
+  return `
+<!-- ① 需求采集区 -->
+<div class="ws-section">
+  <div class="ws-section-title">① 需求采集</div>
+  <div class="ws-section-desc">输入四个维度的信息，SS 将基于此进行综合分析，生成结构化洞察。</div>
+  <div class="pr-input-grid">
+    <div class="pr-input-card">
+      <div class="pr-input-label"><span class="pr-input-num">1</span>行业 &amp; 公司</div>
+      <input id="pr-industry" type="text"
+        placeholder="例：物业管理 · 世茂物业"
+        value="${esc(saved.industry||'')}"/>
+    </div>
+    <div class="pr-input-card">
+      <div class="pr-input-label"><span class="pr-input-num">2</span>业务战略目标</div>
+      <input id="pr-goal" type="text"
+        placeholder="例：2026 年新客签约量提升 30%"
+        value="${esc(saved.goal||'')}"/>
+    </div>
+    <div class="pr-input-card">
+      <div class="pr-input-label"><span class="pr-input-num">3</span>高层期待</div>
+      <textarea id="pr-expect"
+        placeholder="领导层希望看到什么样的改变？&#10;例：项目经理能主动发现增值服务机会，主动跟进…">${esc(saved.expect||'')}</textarea>
+    </div>
+    <div class="pr-input-card">
+      <div class="pr-input-label"><span class="pr-input-num">4</span>核心担忧</div>
+      <textarea id="pr-concern"
+        placeholder="领导层目前最担心什么风险？&#10;例：团队缺乏经营意识，忙于救火而非创造价值…">${esc(saved.concern||'')}</textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ② AI 分析引擎 -->
+<div class="ws-section">
+  <div class="ws-section-title">② AI 分析引擎</div>
+  <div class="pr-analyze-bar">
+    <div class="pr-analyze-hint">
+      <b>SS 将自动完成三维推演：</b>&nbsp; 内部研究 · 外部研究 · 人才研究<br/>
+      <span style="font-size:11.5px;color:var(--slate-600)">请先完善上方四个输入项，再点击启动分析</span>
+    </div>
+    <button class="pr-analyze-btn" id="pr-run-btn" onclick="runPreResearchAI()">
+      <span class="btn-spinner"></span>
+      <span class="btn-label">✦ SS 启动分析</span>
+    </button>
+  </div>
+  <!-- 进度条 -->
+  <div class="pr-progress-bar" id="pr-progress">
+    <div class="pr-progress-track"><div class="pr-progress-fill" id="pr-fill"></div></div>
+    <span class="pr-progress-text" id="pr-progress-text">SS 正在调取数据进行综合分析…</span>
+  </div>
+  <!-- 三维分析卡 -->
+  <div class="pr-dims">
+    <div class="pr-dim-card" id="pr-dim-0">
+      <div class="pr-dim-icon">🏢</div>
+      <div class="pr-dim-title">内部研究</div>
+      <div class="pr-dim-body" id="pr-dim-body-0">业务战略与经营现状分析将在此呈现</div>
+    </div>
+    <div class="pr-dim-card" id="pr-dim-1">
+      <div class="pr-dim-icon">🌐</div>
+      <div class="pr-dim-title">外部研究</div>
+      <div class="pr-dim-body" id="pr-dim-body-1">行业趋势与竞争环境分析将在此呈现</div>
+    </div>
+    <div class="pr-dim-card" id="pr-dim-2">
+      <div class="pr-dim-icon">👥</div>
+      <div class="pr-dim-title">人才研究</div>
+      <div class="pr-dim-body" id="pr-dim-body-2">目标群体技能知识与绩效现状将在此呈现</div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ AI 洞察决策区（3 WHYs）-->
+<div class="ws-section">
+  <div class="ws-section-title">③ 核心洞察 · The 3 WHYs</div>
+  <div class="ws-section-desc">AI 自动回答三个关键决策问题，确保赋能设计锚定业务价值。</div>
+  <div class="pr-whys">
+    <div class="pr-why-card" id="pr-why-0">
+      <div class="pr-why-badge">WHY<span>1</span></div>
+      <div>
+        <div class="pr-why-q">为什么是这些人？ — 锁定关键受众</div>
+        <div class="pr-why-a" id="pr-why-a-0">AI 分析后将自动填充……</div>
+      </div>
+    </div>
+    <div class="pr-why-card" id="pr-why-1">
+      <div class="pr-why-badge">WHY<span>2</span></div>
+      <div>
+        <div class="pr-why-q">为什么是这个主题？ — 明确赋能核心</div>
+        <div class="pr-why-a" id="pr-why-a-1">AI 分析后将自动填充……</div>
+      </div>
+    </div>
+    <div class="pr-why-card" id="pr-why-2">
+      <div class="pr-why-badge">WHY<span>3</span></div>
+      <div>
+        <div class="pr-why-q">为什么现在是合适时机？ — 识别业务紧迫性</div>
+        <div class="pr-why-a" id="pr-why-a-2">AI 分析后将自动填充……</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ④ 最终价值产出区 -->
+<div class="ws-section pr-output-section" id="pr-output-section">
+  <div class="ws-section-title">④ 业务赋能目标优先排序</div>
+  <div class="ws-section-desc">基于三维分析与 3 WHYs 洞察，SS 综合生成以下优先排序建议。</div>
+  <table class="pr-priority-table">
+    <thead>
+      <tr>
+        <th style="width:52px">优先级</th>
+        <th>业务赋能目标重点</th>
+        <th style="width:200px">对标 KPI 价值</th>
+      </tr>
+    </thead>
+    <tbody id="pr-table-body">
+      <tr><td colspan="3" style="text-align:center;color:var(--slate-700);padding:24px">
+        AI 分析完成后自动生成 →
+      </td></tr>
+    </tbody>
+  </table>
+  <div class="pr-action-row">
+    <button class="pr-action-btn download" onclick="downloadPreResearchReport()">
+      ⬇ 下载预研报告模板
+    </button>
+    <button class="pr-action-btn next" onclick="alert('任务 1·1·2 多维调研洞察即将开放，请先完成并保存本任务。')">
+      跳转下一步：调研洞察 →
+    </button>
+  </div>
+</div>`;
+}
+
+// ────────────────────────────────────────────
+// 预先研究 AI 分析核心
+// ────────────────────────────────────────────
+async function runPreResearchAI() {
+  const industry = document.getElementById('pr-industry')?.value?.trim();
+  const goal     = document.getElementById('pr-goal')?.value?.trim();
+  const expect_  = document.getElementById('pr-expect')?.value?.trim();
+  const concern  = document.getElementById('pr-concern')?.value?.trim();
+
+  if (!industry && !goal) {
+    alert('请至少填写「行业 & 公司」和「业务战略目标」后再启动分析。');
+    return;
+  }
+
+  // 保存用户输入
+  localStorage.setItem('rh_pr_data_v1', JSON.stringify({ industry, goal, expect: expect_, concern }));
+  // 实时刷新项目标题
+  const companyRaw2 = industry.split(/[·\-\/，,]+/).pop().trim();
+  const titleEl = document.getElementById('proj-title');
+  if (titleEl && companyRaw2) {
+    titleEl.innerHTML =
+      `<span style="color:var(--red-400);font-weight:900">${esc(companyRaw2)}</span>` +
+      `<span style="color:var(--slate-500);font-weight:500;font-size:15px;margin-left:8px">定制场景化业务赋能训战项目</span>`;
+  }
+
+  const btn = document.getElementById('pr-run-btn');
+  btn.classList.add('running');
+  btn.disabled = true;
+
+  // 显示进度条
+  const progressBar = document.getElementById('pr-progress');
+  const fill = document.getElementById('pr-fill');
+  const progressText = document.getElementById('pr-progress-text');
+  progressBar.classList.add('visible');
+
+  // 进度动画工具
+  let pct = 0;
+  const setProgress = (p, txt) => {
+    pct = p; fill.style.width = p + '%';
+    if (txt) progressText.textContent = txt;
+  };
+
+  try {
+    const aiCfg = loadAI();
+    const useAI = aiCfg.enabled && aiCfg.apiKey;
+
+    setProgress(8, 'SS 正在调取内部战略数据与经营现状…  预计需要 20 秒');
+    await sleep(900);
+    setProgress(22, 'SS 正在扫描外部行业趋势与竞争格局…');
+    await sleep(900);
+    setProgress(38, 'SS 正在比对人才绩效现状与行业对标…');
+
+    let dims, whys, priorities;
+
+    if (useAI) {
+      // ─── 真实 AI 调用 ─────────────────────────────
+      const prompt = buildPreResearchPrompt(industry, goal, expect_, concern);
+      setProgress(50, 'SS 正在进行 AI 语义推演与综合分析…  预计还需 10 秒');
+      const raw = await callAI(aiCfg, prompt);
+      setProgress(82, 'SS 正在生成洞察报告与优先排序…');
+      await sleep(600);
+      try {
+        const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || '{}');
+        dims       = parsed.dims       || fallbackDims(industry, goal);
+        whys       = parsed.whys       || fallbackWhys(industry, goal, expect_, concern);
+        priorities = parsed.priorities || fallbackPriorities(industry, goal);
+      } catch(e) {
+        dims       = fallbackDims(industry, goal);
+        whys       = fallbackWhys(industry, goal, expect_, concern);
+        priorities = fallbackPriorities(industry, goal);
+      }
+    } else {
+      // ─── 模板降级 ──────────────────────────────────
+      setProgress(55, 'SS 基于模板引擎进行结构化推演…（未配置 AI）');
+      await sleep(1200);
+      setProgress(78, 'SS 正在生成洞察报告…');
+      await sleep(600);
+      dims       = fallbackDims(industry, goal);
+      whys       = fallbackWhys(industry, goal, expect_, concern);
+      priorities = fallbackPriorities(industry, goal);
+    }
+
+    setProgress(100, '分析完成！');
+    await sleep(500);
+
+    // ─── 渲染三维分析 ──────────────────────────────
+    dims.forEach((text, i) => {
+      document.getElementById(`pr-dim-body-${i}`).innerHTML = text;
+      document.getElementById(`pr-dim-${i}`).classList.add('lit');
+    });
+
+    await sleep(300);
+
+    // ─── 渲染 3 WHYs ───────────────────────────────
+    whys.forEach((text, i) => {
+      document.getElementById(`pr-why-a-${i}`).innerHTML = text;
+      document.getElementById(`pr-why-${i}`).classList.add('lit');
+    });
+
+    await sleep(400);
+
+    // ─── 渲染优先排序表 ────────────────────────────
+    const tbody = document.getElementById('pr-table-body');
+    const rankClasses = ['r1','r2','r3','r4','r5'];
+    tbody.innerHTML = priorities.map((row, i) => `
+      <tr>
+        <td style="text-align:center"><span class="pr-rank ${rankClasses[i]||'r5'}">${i+1}</span></td>
+        <td>${row.objective}</td>
+        <td>${row.kpi.map(k=>`<span class="pr-kpi-tag">${k}</span>`).join('')}</td>
+      </tr>`).join('');
+
+    document.getElementById('pr-output-section').classList.add('lit');
+
+    // ─── 保存完整结果 ──────────────────────────────
+    localStorage.setItem('rh_pr_result_v1', JSON.stringify({ dims, whys, priorities, savedAt: Date.now() }));
+
+    progressBar.classList.remove('visible');
+
+  } catch(err) {
+    console.error(err);
+    setProgress(100, '⚠ 分析出错，已切换至模板引擎');
+    await sleep(1000);
+    progressBar.classList.remove('visible');
+  } finally {
+    btn.classList.remove('running');
+    btn.disabled = false;
+    btn.querySelector('.btn-label').textContent = '✓ 重新分析';
+  }
+}
+
+// ────────────────────────────────────────────
+// AI prompt 构建
+// ────────────────────────────────────────────
+function buildPreResearchPrompt(industry, goal, expect_, concern) {
+  return `你是企业人才发展与业务赋能专家（SS 方法论顾问）。
+请基于以下信息，以 JSON 格式输出"预先研究"分析报告，字数适中，语言专业精炼，中文。
+
+【用户输入】
+- 行业/公司：${industry}
+- 业务战略目标：${goal}
+- 高层期待：${expect_ || '未填写'}
+- 核心担忧：${concern || '未填写'}
+
+【输出格式】（严格 JSON，不要额外说明）
+{
+  "dims": [
+    "内部研究：……（2-3句，聚焦战略与经营现状，结合用户输入）",
+    "外部研究：……（2-3句，聚焦行业趋势与竞争环境）",
+    "人才研究：……（2-3句，聚焦目标群体技能知识与绩效现状）"
+  ],
+  "whys": [
+    "WHY1 受众锁定：……（1-2句，说明为什么是这些人）",
+    "WHY2 主题聚焦：……（1-2句，说明为什么是这个赋能主题）",
+    "WHY3 时机判断：……（1-2句，说明为什么现在是合适时机）"
+  ],
+  "priorities": [
+    { "objective": "赋能目标描述（15字内）", "kpi": ["KPI指标1", "KPI指标2"] },
+    { "objective": "…", "kpi": ["…"] },
+    { "objective": "…", "kpi": ["…"] },
+    { "objective": "…", "kpi": ["…"] },
+    { "objective": "…", "kpi": ["…"] }
+  ]
+}`;
+}
+
+// ────────────────────────────────────────────
+// 模板降级引擎
+// ────────────────────────────────────────────
+function fallbackDims(industry, goal) {
+  const ind = industry || '该行业';
+  const g   = goal     || '战略目标';
+  return [
+    `<b>内部研究：</b>针对「${ind}」的战略方向，当前组织正面临从职能驱动向经营驱动的转型，业务目标「${g}」的达成需要关键岗位人员具备更强的经营意识与跨职能协作能力。`,
+    `<b>外部研究：</b>行业竞争加剧，头部企业正加速构建以数字化与服务质量为核心的差异化壁垒；人才赋能已成为获取竞争优势的核心杠杆，而非传统培训项目的补充。`,
+    `<b>人才研究：</b>目标群体在专业知识方面有一定积累，但在战略转化、客户经营与场景化决策能力上存在显著差距，现有绩效表现呈现明显的个体差异，头部与尾部人员能力差距较大。`
+  ];
+}
+function fallbackWhys(industry, goal, expect_, concern) {
+  const ind = industry || '该行业';
+  const g   = goal     || '战略目标';
+  const ex  = expect_  || '看到组织能力提升';
+  const con = concern  || '能力建设与业务脱节';
+  return [
+    `聚焦直接承接「${g}」的关键岗位群体——他们处于业务价值链的核心节点，其行为改变对目标达成具有最高杠杆效应。高层期待"${ex.slice(0,30)}"的实现路径，必须从这群人的行为转变出发。`,
+    `当前${ind}竞争格局下，"${g}"的核心障碍并非资源不足，而是关键人员的经营意识、场景决策与客户价值创造能力的缺失。赋能主题需直指这一行为能力缺口。`,
+    `高层担忧"${con.slice(0,30)}"正在窗口期内积累风险。当前是组织注意力高度聚焦战略目标的关键时间节点，此时启动赋能项目，最易获得资源支持与学员投入，转化效率最高。`
+  ];
+}
+function fallbackPriorities(industry, goal) {
+  return [
+    { objective: '经营意识与目标分解能力', kpi: ['战略目标达成率', '团队 OKR 对齐度'] },
+    { objective: '客户价值挖掘与服务增值', kpi: ['客户满意度 NPS', '增值服务签约率'] },
+    { objective: '场景化问题分析与决策', kpi: ['关键事件处理周期', '一次性解决率'] },
+    { objective: '跨职能资源整合协作', kpi: ['项目协同效率', '内部满意度'] },
+    { objective: '数据化复盘与经验迁移', kpi: ['案例沉淀量', '最佳实践传播率'] }
+  ];
+}
+
+// ────────────────────────────────────────────
+// 下载预研报告模板
+// ────────────────────────────────────────────
+function downloadPreResearchReport() {
+  const saved = (() => {
+    try { return JSON.parse(localStorage.getItem('rh_pr_data_v1') || '{}'); } catch(e) { return {}; }
+  })();
+  const result = (() => {
+    try { return JSON.parse(localStorage.getItem('rh_pr_result_v1') || '{}'); } catch(e) { return {}; }
+  })();
+
+  const now = new Date().toLocaleDateString('zh-CN');
+  const priorities = result.priorities || [];
+  const whys = result.whys || [];
+  const dims = result.dims || [];
+
+  const md = `# 预先研究报告
+> 生成日期：${now}  |  SS 捷迈训战设计平台
+
+---
+
+## 基本信息
+- **行业 / 公司**：${saved.industry || '—'}
+- **业务战略目标**：${saved.goal || '—'}
+- **高层期待**：${saved.expect || '—'}
+- **核心担忧**：${saved.concern || '—'}
+
+---
+
+## 三维研究分析
+
+${dims.map((d,i) => `### ${['内部研究','外部研究','人才研究'][i]}\n${d.replace(/<[^>]+>/g,'')}`).join('\n\n') || '（分析内容待生成）'}
+
+---
+
+## 核心洞察 · The 3 WHYs
+
+**WHY 1 — 为什么是这些人？**
+${whys[0]?.replace(/<[^>]+>/g,'') || '—'}
+
+**WHY 2 — 为什么是这个主题？**
+${whys[1]?.replace(/<[^>]+>/g,'') || '—'}
+
+**WHY 3 — 为什么现在是合适时机？**
+${whys[2]?.replace(/<[^>]+>/g,'') || '—'}
+
+---
+
+## 业务赋能目标优先排序
+
+| 优先级 | 业务赋能目标重点 | 对标 KPI 价值 |
+|:---:|---|---|
+${priorities.map((r,i) => `| ${i+1} | ${r.objective} | ${r.kpi.join(' · ')} |`).join('\n') || '| — | 请先运行 AI 分析 | — |'}
+
+---
+
+*本报告由 SS 捷迈训战设计平台自动生成，供内部使用*
+`;
+
+  const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `预先研究报告_${now.replace(/\//g,'-')}.md`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ────────────────────────────────────────────
+// 工具函数
+// ────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function callAI(cfg, prompt) {
+  const endpoint = cfg.provider === 'compatible' ? cfg.endpoint : 'https://api.openai.com/v1/chat/completions';
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + cfg.apiKey },
+    body: JSON.stringify({
+      model: cfg.model || 'gpt-4o',
+      messages: [{ role:'user', content: prompt }],
+      temperature: 0.7, max_tokens: 1200
+    })
+  });
+  if (!resp.ok) throw new Error('AI 请求失败: ' + resp.status);
+  const data = await resp.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function closeWorkspace() {
+  document.getElementById('workspace-overlay').classList.remove('open');
+  activeTask = null;
+}
+
+function closeWorkspaceOnBg(e) {
+  if(e.target === document.getElementById('workspace-overlay')) closeWorkspace();
+}
+
+function saveWorkspace() {
+  if(!currentId || !activeTask) return;
+  const idx = projects.findIndex(p=>p.id===currentId);
+  if(idx<0) return;
+  if(!projects[idx].taskProgress) projects[idx].taskProgress = {};
+  projects[idx].taskProgress[activeTask.key] = { savedAt: Date.now() };
+  projects[idx].updatedAt = Date.now();
+  saveProjects(projects);
+  const st = document.getElementById('ws-save-status');
+  st.textContent = '✓ 已保存';
+  st.className = 'ws-save-status saved';
+  showToast('进度已保存','success');
+}
+
+// ════════════════════════════════════════════
+// AI CONFIG
+// ════════════════════════════════════════════
+let aiProvider = 'openai';
+
+function updateAIStatus() {
+  const cfg = loadAI();
+  const dot = document.getElementById('ai-dot');
+  const txt = document.getElementById('ai-status-text');
+  if(cfg.enabled && cfg.apiKey) {
+    dot.classList.add('on');
+    txt.textContent = `AI · ${cfg.model || 'gpt-4o'}`;
+  } else {
+    dot.classList.remove('on');
+    txt.textContent = 'AI 未配置';
+  }
+}
+
+function openAIModal() {
+  const cfg = loadAI();
+  aiProvider = cfg.provider || 'openai';
+  document.getElementById('ai-key').value = cfg.apiKey || '';
+  document.getElementById('ai-model').value = cfg.model || (aiProvider==='openai'?'gpt-4o':'deepseek-chat');
+  document.getElementById('ai-endpoint').value = cfg.endpoint || '';
+  selectProvider(aiProvider);
+  document.getElementById('ai-modal').classList.add('open');
+}
+function closeAIModal() { document.getElementById('ai-modal').classList.remove('open'); }
+
+function selectProvider(p) {
+  aiProvider = p;
+  document.getElementById('prov-openai').classList.toggle('selected', p==='openai');
+  document.getElementById('prov-compatible').classList.toggle('selected', p==='compatible');
+  document.getElementById('endpoint-field').style.display = p==='compatible'?'block':'none';
+}
+
+function saveAIConfig() {
+  const key = document.getElementById('ai-key').value.trim();
+  if(!key) { showToast('请填写 API Key','error'); return; }
+  const cfg = {
+    enabled: true,
+    provider: aiProvider,
+    apiKey: key,
+    model: document.getElementById('ai-model').value.trim() || (aiProvider==='openai'?'gpt-4o':'deepseek-chat'),
+    endpoint: document.getElementById('ai-endpoint').value.trim()
+  };
+  saveAI(cfg);
+  closeAIModal();
+  updateAIStatus();
+  showToast('AI 配置已保存','success');
+}
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast${type?' '+type:''}`;
+  void t.offsetWidth;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+(function init(){
+  renderSidebar();
+  updateAIStatus();
+  // 如果只有一个项目，自动打开
+  if(projects.length === 1) selectProject(projects[0].id);
+})();
+</script>
+</body>
+</html>
