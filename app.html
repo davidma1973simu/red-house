@@ -1312,7 +1312,7 @@
                     <div class="task-io-label">产出</div>
                     <span class="task-io-item output">多维需求矩阵</span>
                     <span class="task-io-item output">核心需求类别</span>
-                    <span class="task-io-item output">需求要素与本质报告</span>
+                    <span class="task-io-item output">核心赋能命题</span>
                   </div>
                 </div>
                 <div class="task-card-footer">
@@ -2360,36 +2360,36 @@ function renderSurveyInsight() {
     <div class="si-layer-card" id="si-layer-0">
       <div class="si-layer-badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc">L1</div>
       <div style="flex:1">
-        <div class="si-layer-title">现象和事实 <span class="si-layer-sub">Phenomena &amp; Facts</span></div>
-        <div class="si-layer-body" id="si-layer-body-0">AI 分析后将汇总四个维度的原始业务碎片描述……</div>
-        <textarea class="pr-dim-edit-area" id="si-layer-edit-0" placeholder="编辑现象和事实……"></textarea>
+        <div class="si-layer-title">现象 <span class="si-layer-sub">Observable Symptoms · 能观察到什么？</span></div>
+        <div class="si-layer-body" id="si-layer-body-0">AI 将从四个维度提炼可观察到的具体行为症状或业务表现……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-0" placeholder="描述可观察到的具体行为症状或业务表现……"></textarea>
       </div>
     </div>
 
     <div class="si-layer-card" id="si-layer-1">
       <div class="si-layer-badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7">L2</div>
       <div style="flex:1">
-        <div class="si-layer-title">共性和规律 <span class="si-layer-sub">Common Patterns</span></div>
-        <div class="si-layer-body" id="si-layer-body-1">AI 识别跨层级、跨岗位的共同痛点与反复出现的业务障碍……</div>
-        <textarea class="pr-dim-edit-area" id="si-layer-edit-1" placeholder="编辑共性和规律……"></textarea>
+        <div class="si-layer-title">共性 <span class="si-layer-sub">Cross-Role Patterns · 为什么不是偶然？</span></div>
+        <div class="si-layer-body" id="si-layer-body-1">AI 将识别哪几个角色均有反映，它们共同指向了什么规律性问题……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-1" placeholder="描述跨角色、跨维度的共性规律——说明哪些角色均有反映……"></textarea>
       </div>
     </div>
 
     <div class="si-layer-card" id="si-layer-2">
       <div class="si-layer-badge" style="background:rgba(245,158,11,0.15);color:#fcd34d">L3</div>
       <div style="flex:1">
-        <div class="si-layer-title">结构要素和驱动力 <span class="si-layer-sub">Structural Elements &amp; Drivers</span></div>
-        <div class="si-layer-body" id="si-layer-body-2">剖析规律背后的核心驱动力，例如「数据化决策机制缺失」……</div>
-        <textarea class="pr-dim-edit-area" id="si-layer-edit-2" placeholder="编辑结构要素和驱动力……"></textarea>
+        <div class="si-layer-title">结构 <span class="si-layer-sub">Structural Root Cause · 为什么这个规律会持续存在？</span></div>
+        <div class="si-layer-body" id="si-layer-body-2">AI 将指出什么组织机制/能力/流程缺失，导致了 L2 的共性问题……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-2" placeholder="用「X 缺失/不足，导致 Y」的因果句式描述结构根因……"></textarea>
       </div>
     </div>
 
     <div class="si-layer-card" id="si-layer-3">
       <div class="si-layer-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5">L4</div>
       <div style="flex:1">
-        <div class="si-layer-title">价值、文化和信念 <span class="si-layer-sub">Values, Culture &amp; Beliefs</span></div>
-        <div class="si-layer-body" id="si-layer-body-3">触达本质，明确业务赋能如何对齐组织文化与员工职业信念……</div>
-        <textarea class="pr-dim-edit-area" id="si-layer-edit-3" placeholder="编辑价值、文化和信念……"></textarea>
+        <div class="si-layer-title">价值与文化 <span class="si-layer-sub">Beliefs &amp; Culture · 为什么结构问题难以被改变？</span></div>
+        <div class="si-layer-body" id="si-layer-body-3">AI 将揭示什么深层信念或文化假设，让 L3 的结构问题得以长期存在……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-3" placeholder="描述隐含的组织假设或文化障碍，如「控制=安全」「经验不可复制」……"></textarea>
       </div>
     </div>
 
@@ -2442,10 +2442,10 @@ function renderSurveyInsight() {
     <textarea class="pr-dim-edit-area" id="si-cats-edit-area" placeholder="编辑核心需求类别……" style="min-height:80px"></textarea>
   </div>
 
-  <!-- 产出 C：需求要素与本质报告 -->
+  <!-- 产出 C：核心赋能命题 -->
   <div class="si-output-block" id="si-out-c">
     <div class="si-out-block-title">
-      <span class="si-out-idx">C</span> 需求要素与本质 · 赋能洞察报告
+      <span class="si-out-idx">C</span> 核心赋能命题 · Enabling Proposition
     </div>
     <div class="pr-block-ctrl" style="margin-top:4px">
       <span class="ctrl-saved-hint" id="si-essence-hint">✓ 已保存</span>
@@ -2453,8 +2453,8 @@ function renderSurveyInsight() {
       <button class="pr-save-btn"   id="si-essence-save"   onclick="saveEditSiEssence()">💾 保存修订</button>
       <button class="pr-edit-btn"   id="si-essence-edit"   onclick="startEditSiEssence()">✏️ 编辑</button>
     </div>
-    <div class="si-essence-body" id="si-essence-body">AI 分析后自动生成核心洞察报告……</div>
-    <textarea class="pr-dim-edit-area" id="si-essence-edit-area" placeholder="编辑需求要素与本质……" style="min-height:100px"></textarea>
+    <div class="si-essence-body" id="si-essence-body">AI 分析后将生成核心赋能命题：打破什么假设 → 建立什么体验 → 项目核心价值命题……</div>
+    <textarea class="pr-dim-edit-area" id="si-essence-edit-area" placeholder="描述这次赋能要打破什么假设、建立什么体验、核心价值命题是什么……" style="min-height:100px"></textarea>
   </div>
 
   <!-- 行动按钮 -->
@@ -2717,7 +2717,7 @@ function downloadSurveyInsightReport() {
   });
   md += `\n## 三、核心需求类别\n\n`;
   (result.categories||[]).forEach(c => { md += `- **${c.label}**${c.domain?'（'+c.domain+'）':''}\n`; });
-  md += `\n## 四、需求要素与本质\n\n${(result.essence||'').replace(/<[^>]+>/g,'')}\n`;
+  md += `\n## 四、核心赋能命题\n\n${(result.essence||'').replace(/<[^>]+>/g,'')}\n`;
 
   const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
   const a = document.createElement('a');
@@ -2882,25 +2882,57 @@ function buildSurveyInsightPrompt(senior, expert, hrbp, hiper, prInsights) {
   const prDims   = prInsights?.dims   || '（未提供）';
   const prWhys   = prInsights?.whys   || '（未提供）';
 
-  return `你是一名严格遵循循证原则的企业人才发展专家。你的核心任务是：**将用户提供的原始调研输入，转化为基于事实的结构化洞察**。
+  return `你是一名企业人才发展与业务赋能专家，擅长将调研原始资料转化为具有因果链条的洞察结论。
 
-====== 铁律（违反则输出无效）======
-① 每一句话都必须直接锚定下方【输入原文】中的具体词汇、数字、场景或短语——禁止使用原文中不存在的词
-② 禁止输出以下任何形式的空话：「战略落地」「业务脱节」「学习转化率低」「投入产出比」「系统性缺失」「刻意练习」「突破天花板」——这些都是与具体输入无关的套话
-③ 每个维度的 expect/concern/key 必须是从该维度原文中直接提炼，不可跨维度混用
-④ L1 必须保留原文中所有可识别的：数字（%、倍数、人数）、专有名词（产品名/模式名/系统名）、具体场景词
-⑤ L2 的规律必须从至少两个维度的原文中找到共同指向，并明确标出是哪两个维度（如「高层和业务专家均提到……」）
-⑥ L3 的驱动力必须用一句「……机制/能力/工具 缺失/不足/断层」的结构句，且该缺口必须能在原文中找到证据
-⑦ L4 必须指向这次赋能**具体应解决什么信念或文化障碍**，不能是正向励志口号
-⑧ categories 的 label 必须从输入内容中提炼出实际存在的需求类型，不得固定使用「战略认同类/业务增长类/流程协同类/能力建设类」——除非原文中确实存在对应内容；每个类别的 domain 必须是与原文直接关联的具体场景（20字内）
+## 你的分析任务
 
-====== 预先研究产出（来自任务 1.1.1）======
-业务赋能优先目标：
+基于四个维度的调研原文，完成一次完整的**因果推导分析**。分析分为五层，每一层都是对上一层的**因果解释**，而不是重复或拼接：
+
+- **L1 现象**：从原文中提炼出可观察到的具体表现和行为症状（是什么）
+- **L2 共性**：找出跨维度、跨角色普遍出现的规律性问题（不只是某个人的个别现象）
+- **L3 结构**：指出造成以上共性问题的组织机制、流程或能力层面的根因（为什么存在）
+- **L4 价值与信念**：揭示支撑这些结构问题存在的深层文化假设或信念障碍（为什么难以改变）
+- **定义（essence）**：基于以上分析，明确这次业务赋能需要解决的核心命题（要做什么）
+
+---
+
+## 分析范式示例（你必须遵循此逻辑结构）
+
+假设调研中多方提到"员工自主性不够"，正确分析如下：
+- **现象**：员工在日常决策中习惯等待上级指令，创新提案极少来自一线员工（引自原文具体表述）
+- **共性**：跨部门访谈均反映决策链条长、审批流程繁琐，不同角色都感受到"做事很被动"
+- **结构**：组织层级过于复杂，缺乏授权机制——从原文可以判断，员工无法在职责范围内独立拍板
+- **价值与信念**：组织文化倾向于控制和审核，管理者默认"不授权=减少风险"，信任文化缺失
+- **定义**：本次赋能核心是打破"控制=安全"的管理假设，设计更加自主的工作环境，让员工真实体验"被授权后结果更好"
+
+---
+
+## 质量要求
+
+✅ 每一层必须是对上一层的**推进和解释**，不是并列关系
+✅ L1 中必须保留原文中的具体词汇、数字、场景词——这是分析的事实依据
+✅ L2 必须跨维度总结（说明哪些角色均有反映），而非单个维度的重复
+✅ L3 必须是**归纳出的一个根因命题**，格式："……机制/能力/流程 缺失/不足"——而不是罗列原文片段
+✅ L4 必须是**信念障碍或文化假设**（如"控制=安全"、"培训没有用"），不是表层抱怨
+✅ essence（定义）必须是**可执行的赋能核心命题**，包含"打破什么假设"和"建立什么新体验"
+✅ 需求矩阵的每格必须从对应维度原文中提炼，不可用固定模板
+✅ 需求类别必须根据原文实际内容命名，禁止固定使用「战略认同/业务增长/流程协同/能力建设」
+
+❌ 禁止使用与输入无关的套话：「战略落地」「业务脱节」「学习转化率低」「投入产出比」「刻意练习」「突破天花板」「系统性缺失」
+
+---
+
+## 上下文
+
+**业务赋能优先目标（来自任务 1.1.1 预先研究）：**
 ${prGoals}
 三维分析摘要：${prDims}
-业务赋能WHY：${prWhys}
+赋能背景（WHY）：${prWhys}
 
-====== 四维度调研原文输入 ======
+---
+
+## 四维度调研原文
+
 【高层领导原文】：
 ${senior || '（未填写）'}
 
@@ -2913,27 +2945,30 @@ ${hrbp || '（未填写）'}
 【高绩效员工原文】：
 ${hiper || '（未填写）'}
 
-====== 输出格式（严格 JSON，零多余文字）======
+---
+
+## 输出格式（严格 JSON，零多余文字）
+
 {
   "layers": [
-    "L1 现象和事实：【直接引用原文碎片，格式：「维度名」说：'原文关键词/句'；……，不少于3个维度的原文引用，保留所有数字和专有名词】",
-    "L2 共性和规律：【指出哪两个或多个维度原文同时揭示了什么共同障碍，格式：「X维度」和「Y维度」均反映……；规律必须是横跨维度的交叉点，而非单一维度的重复】",
-    "L3 结构要素和驱动力：【指出1-2个核心机制性缺口，格式：①「具体缺口名称」缺失——原文证据：……导致……；② 可选第二个缺口，同样格式】",
-    "L4 价值和文化障碍：【指出组织中存在的具体信念障碍或文化误区，格式：当前障碍是……（引自原文），这次赋能需要打破的核心假设是……】"
+    "L1 现象：【一句话总结：从以上原文可以观察到什么具体行为症状或业务表现——保留原文中的具体词汇/数字/场景，但要归纳成一个完整陈述，而不是拼接原文碎片】",
+    "L2 共性：【一句话总结：上述现象为什么不是偶然的——哪几个维度/角色均有反映，它们共同指向了什么规律性问题（必须跨维度，指出具体是哪些角色）】",
+    "L3 结构要素：【一句话总结：什么组织层面的机制/能力/流程缺失，导致了以上共性问题——用「X 缺失/不足，导致 Y」的因果句式，X 是根因，Y 是 L2 的规律】",
+    "L4 价值与文化：【一句话总结：什么深层信念或文化假设，让 L3 的结构问题得以持续存在并难以改变——不是表层抱怨，而是隐含的组织假设，如「控制=安全」「经验不可复制」】"
   ],
   "matrix": [
-    {"role":"高层领导","expect":"从高层原文提炼的最核心期待（15字内，必须与原文匹配）","concern":"从高层原文提炼的最大顾虑（15字内）","key":"高层原文中最重要的1个具体细节（20字内，带数字/场景）"},
-    {"role":"业务专家","expect":"从业务专家原文提炼（15字内）","concern":"从业务专家原文提炼（15字内）","key":"业务专家原文中最具体的障碍描述（20字内）"},
-    {"role":"HRBP/TD","expect":"从HRBP原文提炼（15字内）","concern":"从HRBP原文提炼（15字内）","key":"HRBP原文中最关键的数据或判断（20字内）"},
-    {"role":"高绩效员工","expect":"从高绩效员工原文提炼（15字内）","concern":"从高绩效员工原文提炼（15字内）","key":"高绩效员工原文中最有价值的观察（20字内）"}
+    {"role":"高层领导","expect":"高层最想通过这次赋能实现什么（15字内，源自原文）","concern":"高层最担心这次赋能出现什么问题（15字内，源自原文）","key":"高层原文中最能代表其诉求的具体表达（20字内，含场景或数字）"},
+    {"role":"业务专家","expect":"业务专家期待解决什么具体问题（15字内，源自原文）","concern":"业务专家的主要顾虑是什么（15字内，源自原文）","key":"业务专家原文中最有价值的一个具体描述（20字内）"},
+    {"role":"HRBP/TD","expect":"HRBP/TD 最希望看到什么结果（15字内，源自原文）","concern":"HRBP/TD 担心什么阻碍（15字内，源自原文）","key":"HRBP/TD 原文中最关键的数据或判断（20字内）"},
+    {"role":"高绩效员工","expect":"高绩效员工希望得到什么支持（15字内，源自原文）","concern":"高绩效员工的主要顾虑（15字内，源自原文）","key":"高绩效员工原文中最有参考价值的观察（20字内）"}
   ],
   "categories": [
-    {"label":"从输入提炼的第1类需求（4-6字）","domain":"与该类需求直接对应的具体业务场景（15字内）"},
-    {"label":"从输入提炼的第2类需求（4-6字）","domain":"…"},
-    {"label":"从输入提炼的第3类需求（4-6字）","domain":"…"},
-    {"label":"从输入提炼的第4类需求（4-6字）","domain":"…"}
+    {"label":"从原文实际需求提炼的类型名称（4-6字）","domain":"该类需求对应的最具体业务场景（15字内，非抽象描述）"},
+    {"label":"第2类需求名称","domain":"对应场景"},
+    {"label":"第3类需求名称","domain":"对应场景"},
+    {"label":"第4类需求名称","domain":"对应场景"}
   ],
-  "essence": "需求本质报告（3-5句）：第1句点出原文揭示的核心症状（引用原文具体词）；第2句说明跨维度的共性规律（从L2推导）；第3句指出驱动这些症状的根本机制缺口（从L3推导）；第4句说明这次赋能若成功将打破什么具体信念障碍（从L4推导）；第5句用一句话提炼业务赋能的核心价值命题（与预先研究优先目标呼应）"
+  "essence": "核心赋能命题（2-3句）：第1句说明这次赋能核心要打破的组织假设或信念障碍（对应 L4）；第2句说明通过赋能要建立的新体验或新行为模式；第3句明确这次项目的核心价值命题——以「[具体业务目标] + 通过 [赋能方式] + 实现 [行为改变]」的句式表达，与预先研究优先目标呼应"
 }`;
 }
 
@@ -2978,77 +3013,118 @@ function fallbackSiLayers(senior, expert, hrbp, hiper) {
     { dim: '高绩效员工', text: hiper || '' },
   ];
   const filled = inputs.filter(i => i.text.length > 5);
+  const allText = inputs.map(i => i.text).join(' ');
 
-  // L1：直接截取每个维度原文中最具体的句子
-  const l1Parts = filled.map(i => {
-    const snip = _extractSnippet(i.text, 50);
-    return snip ? `「${i.dim}」反映：${snip}` : null;
-  }).filter(Boolean);
-  const l1 = l1Parts.length > 0
-    ? l1Parts.join('；') + '。'
-    : '（请填写四维度调研内容后运行分析，以获得基于事实的现象总结）';
+  // === L1 现象：归纳"能观察到什么症状"，而非拼接原文 ===
+  // 从各维度提取最具代表性的表述，然后归纳成一个现象陈述
+  let l1 = '';
+  if (filled.length === 0) {
+    l1 = '（请填写四维度调研内容后运行分析）';
+  } else {
+    // 找出出现频率最高的业务行为症状
+    const symptomCues = [
+      { re: /不会|不懂|不知道怎么|没有能力|能力不足/, symptom: '员工在关键场景下能力不足，不知道如何应对' },
+      { re: /没人教|靠老带新|靠经验|个人悟性/, symptom: '新员工或普通员工只能靠个人摸索，缺乏系统支撑' },
+      { re: /参差不齐|不一致|差距大|有的好有的差/, symptom: '同岗位人员表现差异悬殊，结果难以预期' },
+      { re: /推荐.*不准|选品.*错|货品.*问题|卖不动/, symptom: '业务关键动作（如推荐/选品）准确率低，影响直接结果' },
+      { re: /流程.*乱|不知道.*步骤|没有.*流程|操作.*混乱/, symptom: '关键工作流程缺乏标准，员工执行依赖主观判断' },
+      { re: /没有目标|不知道.*做什么|方向不清|目标不明/, symptom: '员工缺乏清晰的业务目标指引，行动方向模糊' },
+    ];
+    const matchedSymptoms = symptomCues
+      .filter(c => c.re.test(allText))
+      .map(c => c.symptom);
 
-  // L2：找两个维度间的交叉痛点
-  const pains = inputs.map(i => ({ dim: i.dim, pains: _detectPainPoints(i.text) })).filter(i => i.pains.length > 0);
-  let l2 = '';
-  if (pains.length >= 2) {
-    const commonPain = pains[0].pains.find(p => pains[1].pains.includes(p));
-    if (commonPain) {
-      l2 = `「${pains[0].dim}」和「${pains[1].dim}」均反映了"${commonPain}"的共性规律；`;
+    const snippets = filled.map(i => {
+      const s = _extractSnippet(i.text, 30);
+      return s ? `（${i.dim}：${s}）` : null;
+    }).filter(Boolean);
+
+    if (matchedSymptoms.length > 0) {
+      l1 = matchedSymptoms[0];
+      if (snippets.length > 0) l1 += `——${snippets[0]}`;
     } else {
-      l2 = `「${pains[0].dim}」反映的"${pains[0].pains[0]}"与「${pains[1].dim}」反映的"${pains[1].pains[0]}"均指向执行层面的结构性障碍；`;
+      // fallback：直接用最具体的一个原文片段描述现象
+      const anchor = _extractSnippet(allText, 40);
+      l1 = anchor
+        ? `调研原文显示：${anchor}，反映出业务执行层面存在具体障碍`
+        : `${filled.length}个维度的访谈均反映了不同程度的执行困难，具体现象见各维度输入`;
     }
-    if (pains.length >= 3) {
-      l2 += `「${pains[2].dim}」进一步印证了该规律在${pains[2].pains[0] || '多层面'}的持续性。`;
+  }
+
+  // === L2 共性：解释"为什么这是规律而非偶然"——跨维度归纳 ===
+  let l2 = '';
+  const pains = inputs.map(i => ({ dim: i.dim, pains: _detectPainPoints(i.text) })).filter(i => i.pains.length > 0);
+  if (pains.length >= 2) {
+    const allPainLabels = pains.flatMap(p => p.pains);
+    const freq = {};
+    allPainLabels.forEach(p => freq[p] = (freq[p]||0) + 1);
+    const topPain = Object.entries(freq).sort((a,b) => b[1]-a[1])[0];
+    const affectedDims = pains.filter(p => p.pains.includes(topPain?.[0])).map(p => p.dim);
+    if (affectedDims.length >= 2) {
+      l2 = `这不是个别人的问题——「${affectedDims.join('」「')}」均反映了"${topPain[0]}"的特征，说明这是组织性的共性障碍，而非个体能力差异。`;
+    } else {
+      const d1kw = _extractKeywords(filled[0]?.text || '').slice(0,2).join('/') || '执行困难';
+      const d2kw = _extractKeywords(filled[1]?.text || '').slice(0,2).join('/') || '能力不足';
+      l2 = `「${pains[0].dim}」和「${pains[1].dim}」虽然描述的细节不同，但共同指向同一个组织层面的障碍——分别体现为"${d1kw}"和"${d2kw}"，说明根因在组织机制而非个人。`;
     }
   } else if (filled.length >= 2) {
-    const kw0 = _extractKeywords(filled[0].text).slice(0,2).join('、') || '相关问题';
-    const kw1 = _extractKeywords(filled[1].text).slice(0,2).join('、') || '相关障碍';
-    l2 = `「${filled[0].dim}」提到的"${kw0}"与「${filled[1].dim}」提到的"${kw1}"指向同一执行断层，说明问题不在个体层面，而在组织机制层面。`;
+    l2 = `${filled.map(i=>i.dim).join('、')}等多个视角的描述都指向同一业务执行层面的困难，说明这不是偶发问题，而是系统性障碍。`;
   } else {
-    l2 = '（需要至少2个维度的调研输入才能识别共性规律）';
+    l2 = '（至少需要2个维度的调研内容才能归纳共性规律，请补充其他维度输入）';
   }
 
-  // L3：从输入中提取最具体的机制缺口
-  const allText = inputs.map(i => i.text).join(' ');
-  const mechanismGaps = [];
-  if (/没有.*机制|机制.*缺|无.*标准|缺.*流程/.test(allText)) {
-    mechanismGaps.push('执行机制/流程标准缺失');
-  }
-  if (/培训.*脱离|学.*无法用|知.*不能行|学.*没用/.test(allText)) {
-    mechanismGaps.push('学习场景与真实业务脱钩');
-  }
-  if (/不知道怎么|不会|不懂|没学过|没人教/.test(allText)) {
-    mechanismGaps.push('核心技能系统性未被培养');
-  }
-  if (/没有复制|难以推广|靠个人|个人经验|靠老带新/.test(allText)) {
-    mechanismGaps.push('优秀经验未被萃取与系统化传播');
-  }
-  const expertSnip = _extractSnippet(expert || senior || '', 30);
+  // === L3 结构：解释"什么机制性缺口导致了L2的共性" ===
   let l3 = '';
-  if (mechanismGaps.length > 0) {
-    l3 = mechanismGaps.map((g, i) => `${['①','②','③'][i] || '·'}「${g}」——原文证据：${expertSnip || '见调研输入'}`).join('；') + '。';
-  } else if (expertSnip) {
-    l3 = `① 基于原文"${expertSnip}"，可识别出核心执行能力的系统性缺口——具体根因需 AI 深度分析后确认。`;
+  // 按照调研内容推断最可能的结构根因
+  const structureGaps = [
+    { re: /没有.*标准|无.*标准|标准.*不统一|没有规范/, gap: '标准化作业规范缺失', consequence: '导致员工只能依赖个人经验，水平参差不齐' },
+    { re: /没有.*机制|机制.*缺|缺.*流程|流程.*不清/, gap: '执行机制与反馈流程缺位', consequence: '导致问题无法被及时识别和纠正' },
+    { re: /没人.*教|没有.*辅导|缺少.*支持|单打独斗|只能自己摸索/, gap: '在岗辅导与支持体系缺失', consequence: '导致能力成长依赖个人摸索，效率极低' },
+    { re: /培训.*没用|学了.*用不上|理论.*实际|课堂.*脱节/, gap: '学习场景与真实业务情境脱钩', consequence: '导致知识无法转化为业务行为' },
+    { re: /经验.*复制|无法.*推广|靠个人|个人悟性|老带新/, gap: '高绩效经验萃取与传播机制空白', consequence: '导致优秀行为无法被系统复制和传承' },
+    { re: /目标.*不清|不知道.*为什么|方向.*混乱|不明白.*重要/, gap: '业务目标向个人行动的转化机制缺失', consequence: '导致员工无法将组织目标转化为自身的行动指南' },
+  ];
+
+  const matchedGaps = structureGaps.filter(g => g.re.test(allText));
+  if (matchedGaps.length > 0) {
+    const topGap = matchedGaps[0];
+    l3 = `根本原因在于「${topGap.gap}」——${topGap.consequence}。`;
+    if (matchedGaps.length > 1) {
+      l3 += `同时「${matchedGaps[1].gap}」也加剧了这一问题。`;
+    }
   } else {
-    l3 = '（请填写调研内容后重新分析以获得具体驱动力分析）';
+    // 基于 L2 类型推断结构根因
+    const generalSnip = _extractSnippet(expert || senior || hrbp || '', 25);
+    l3 = generalSnip
+      ? `从原文"${generalSnip}"可以判断，相关能力培养或执行支撑机制存在缺口——具体结构根因建议通过 AI 深度分析进一步确认。`
+      : '（请填写更详细的调研内容，以便准确识别结构层面的根因）';
   }
 
-  // L4：文化/信念障碍
-  const beliefBarriers = [];
-  if (/不重要|没必要|不用学|不需要培训/.test(allText)) beliefBarriers.push('部分角色认为该能力"不需要培训"可自然习得');
-  if (/没时间|忙|占用.*时间|干扰工作/.test(allText)) beliefBarriers.push('一线员工面临"培训vs业务"时间竞争');
-  if (/看不到效果|没用|没变化|学了也/.test(allText)) beliefBarriers.push('存在对培训效果的普遍质疑');
-  if (/领导不支持|没有资源|预算/.test(allText)) beliefBarriers.push('管理层对赋能投入缺乏信心');
-
+  // === L4 价值与文化：解释"什么信念假设让L3的问题得以持续" ===
   let l4 = '';
-  if (beliefBarriers.length > 0) {
-    l4 = `当前核心文化障碍：${beliefBarriers[0]}；这次赋能需要打破的核心假设是「学习改变行为」——让参与者真实体验到「在模拟真实场景中的刻意练习能直接提升业务结果」。`;
+  const beliefMap = [
+    { re: /不重要|没必要|用不着|不需要培训|又不是不懂/, belief: '"这件事不需要专门培训，做着做着就会了"', challenge: '打破「经验自然习得」的假设，让员工看到系统训练与随机摸索的结果差距' },
+    { re: /没时间|太忙|做业务才是正事|培训耽误时间/, belief: '"培训和做业务是互相竞争的，忙的时候业务优先"', challenge: '建立「训练本身就是高质量业务实践」的体验，消除学与用之间的人为割裂' },
+    { re: /看不到效果|没有用|学了也没变化|做不到/, belief: '"培训没有用，结果还是靠个人"', challenge: '让参与者在真实业务场景中体验到"训练后行为改变带来可见结果"' },
+    { re: /天生的|天赋|悟性|有些人就是厉害/, belief: '"业绩好是天赋和悟性，不是可以教出来的"', challenge: '让员工亲眼看到：高绩效行为是可被识别、萃取和复制的，而非不可解释的天赋' },
+    { re: /领导.*不支持|高层.*不重视|没有资源|没有预算/, belief: '"这是 TD 的责任，业务领导不必深度介入赋能"', challenge: '建立业务领导对赋能共识：业务结果与人才赋能是一体的' },
+  ];
+
+  const matchedBelief = beliefMap.find(b => b.re.test(allText));
+  if (matchedBelief) {
+    l4 = `深层障碍是一个隐含假设：${matchedBelief.belief}。这让 L3 的结构缺口得以长期存在。这次赋能需要${matchedBelief.challenge}。`;
   } else {
-    const hiperSnip = _extractSnippet(hiper || '', 25);
-    l4 = hiperSnip
-      ? `高绩效员工反映"${hiperSnip}"，说明优秀经验存在但尚未被组织化；这次赋能需解决的信念障碍是：优秀行为是「可系统萃取和复制」的，而非天赋或偶然。`
-      : '（调研信息不足以推断文化障碍，建议补充高绩效员工和高层访谈内容）';
+    // 基于 L3 根因推断信念障碍
+    if (/标准化.*缺失|规范.*缺/.test(l3)) {
+      l4 = `深层假设是"各凭本事，结果不同是正常的"——组织没有建立"标准化行为创造可预期结果"的文化共识。这次赋能需要让管理者看到：设定行为标准是提升整体产出的最有效杠杆。`;
+    } else if (/经验.*传播|萃取.*空白/.test(l3)) {
+      l4 = `深层假设是"好的做法不可复制，每个人都得自己悟"——组织没有形成"优秀经验是组织资产"的共识。这次赋能需要打破这一假设，让高绩效员工的行为变成可传播的组织知识。`;
+    } else {
+      const hiperSnip = _extractSnippet(hiper || '', 20);
+      l4 = hiperSnip
+        ? `高绩效员工描述的"${hiperSnip}"说明有效方法已经存在，但组织层面缺乏传播的文化动力。这次赋能需要在体验层面打破"这只是个别人的经验"的偏见。`
+        : '（建议补充更多维度的调研内容，以准确识别深层的文化假设）';
+    }
   }
 
   return [l1, l2, l3, l4];
@@ -3139,41 +3215,61 @@ function fallbackSiCategories(senior, expert, hrbp, hiper) {
 }
 
 function fallbackSiEssence(senior, expert, hrbp, hiper) {
-  const allInputs = [
-    { dim: '高层领导', text: senior || '' },
-    { dim: '业务专家', text: expert || '' },
-    { dim: 'HRBP/TD', text: hrbp   || '' },
-    { dim: '高绩效员工', text: hiper || '' },
-  ].filter(i => i.text.length > 5);
+  const allText = [senior, expert, hrbp, hiper].filter(Boolean).join(' ');
 
-  if (allInputs.length === 0) {
-    return '（请填写四维度调研内容后重新运行分析，以获得基于真实输入的需求本质报告。）';
+  if (!allText || allText.trim().length < 10) {
+    return '（请填写四维度调研内容后重新运行分析，以获得基于真实输入的赋能核心命题。）';
   }
 
-  // 从每个有内容的维度提取一个核心症状词
-  const symptoms = allInputs.map(i => _extractSnippet(i.text, 20)).filter(Boolean);
-  const pains = allInputs.flatMap(i => _detectPainPoints(i.text));
-  const uniquePains = [...new Set(pains)];
+  // ── 第1句：打破什么假设（对应 L4 信念障碍）──
+  let breakBelief = '';
+  if (/不重要|没必要|用不着|做着做着就会/.test(allText)) {
+    breakBelief = '打破"做着做着就会了"的自然习得假设';
+  } else if (/没时间|太忙|培训耽误时间|正事/.test(allText)) {
+    breakBelief = '打破"培训与业务相互竞争"的时间认知偏见';
+  } else if (/看不到效果|没用|靠个人天赋|悟性/.test(allText)) {
+    breakBelief = '打破"业绩好坏靠个人悟性，无法系统培养"的归因假设';
+  } else if (/老带新|个人经验|不可复制/.test(allText)) {
+    breakBelief = '打破"优秀经验只属于个人，无法系统化传播"的隐性信念';
+  } else {
+    // 从 L3 推导：缺什么就打破什么的反面假设
+    if (/标准|规范/.test(allText)) {
+      breakBelief = '打破"各凭本事是正常的，标准化行为不可能实现"的惯性认知';
+    } else {
+      breakBelief = '打破现有组织内对业务赋能效果的惯性质疑';
+    }
+  }
 
-  const symptomSentence = symptoms.length > 0
-    ? `原文揭示的核心症状包括：${symptoms.slice(0,3).join('；')}`
-    : '四个维度均反映了执行层面的具体障碍';
+  // ── 第2句：建立什么新体验（L3 根因的反面）──
+  let buildExperience = '';
+  if (/标准化.*缺失|规范.*缺|没有.*标准/.test(allText)) {
+    buildExperience = '让员工在真实场景模拟中体验到"标准行为→可预期结果"的直接关联';
+  } else if (/经验.*传播|萃取|复制/.test(allText)) {
+    buildExperience = '让高绩效行为在组织内被看见、被理解、被系统化复制';
+  } else if (/培训.*脱离|学.*无法用|场景.*脱节/.test(allText)) {
+    buildExperience = '让学习直接发生在业务情境中，让"练习本身就是高质量的业务实践"';
+  } else if (/不会|不知道怎么|没人教/.test(allText)) {
+    buildExperience = '为员工建立在真实工作场景中练习关键技能的机会，并配套即时反馈';
+  } else {
+    const anchor = _extractSnippet(allText, 20);
+    buildExperience = anchor
+      ? `围绕"${anchor}"等真实业务挑战，设计可以产生行为改变的学习体验`
+      : '为员工创造在真实业务情境中产生有意义改变的学习体验';
+  }
 
-  const patternSentence = uniquePains.length > 0
-    ? `跨维度来看，"${uniquePains.slice(0,2).join('"和"')}"是共同出现的规律性特征`
-    : '跨维度分析显示存在系统性执行障碍';
+  // ── 第3句：核心赋能命题（与预先研究目标呼应）──
+  // 提取关键业务动词/目标词
+  const businessGoals = [];
+  if (/推荐|选品|货品|销售/.test(allText)) businessGoals.push('提升推荐准确率与客户转化');
+  if (/签约|客户开发|成交|获客/.test(allText)) businessGoals.push('提升客户开发与签约能力');
+  if (/服务|满意度|体验|投诉/.test(allText)) businessGoals.push('提升客户服务质量与满意度');
+  if (/管理|带团队|梯队|传帮带/.test(allText)) businessGoals.push('提升管理者在岗辅导与梯队培养能力');
+  if (/数据|分析|决策|判断/.test(allText)) businessGoals.push('提升数据驱动决策的能力');
 
-  const gapSentence = /机制|流程|标准/.test([senior,expert,hrbp,hiper].join(' '))
-    ? '根本驱动力是相关执行机制或标准流程的缺失，导致个体行为差异无法被系统消弭'
-    : /经验|萃取|复制|传承/.test([senior,expert,hrbp,hiper].join(' '))
-    ? '根本驱动力是优秀经验未能被萃取和系统化传播，造成能力分布严重不均'
-    : '根本驱动力在于业务目标到个人行动之间缺乏有效转化机制';
+  const businessGoal = businessGoals[0] || '实现具体业务目标';
+  const coreProposition = `核心赋能命题：以真实业务场景为训练载体，通过「${businessGoal}」的系统练习，将分散的个人经验转化为可复制的组织能力，打通学习与业务结果之间的转化断层。`;
 
-  const beliefSentence = /没时间|占用|干扰/.test([senior,expert,hrbp,hiper].join(' '))
-    ? '这次赋能需要打破"培训会干扰正常工作"的惯性认知，建立学习与业务产出直接挂钩的体验'
-    : '这次赋能的本质是建立"在真实业务场景中练习能直接提升结果"的核心信念';
-
-  return `${symptomSentence}。${patternSentence}。${gapSentence}。${beliefSentence}。以上构成本次业务赋能的核心命题：以真实场景驱动能力建设，以可见结果打通学与用的断层。`;
+  return `这次赋能项目的关键是：${breakBelief}。${buildExperience}。${coreProposition}`;
 }
 
 // ── 供后继任务 1.1.3 调用的接口 ──────────────────────────
