@@ -752,7 +752,62 @@
     .pr-why-q { font-size:11.5px; font-weight:700; color:var(--slate-500); margin-bottom:5px; }
     .pr-why-a { font-size:13px; color:var(--slate-200); line-height:1.65; }
 
-    /* 优先排序表 */
+    /* ══ 区块编辑控制条 ══ */
+    .pr-block-ctrl {
+      display:flex; justify-content:flex-end; align-items:center;
+      gap:8px; margin-bottom:8px;
+    }
+    .pr-block-ctrl .ctrl-saved-hint {
+      font-size:11px; color:#34d399; opacity:0; transition:opacity .4s;
+    }
+    .pr-block-ctrl .ctrl-saved-hint.show { opacity:1; }
+    .pr-edit-btn {
+      padding:5px 13px; font-size:11.5px; font-weight:700;
+      border-radius:6px; cursor:pointer;
+      border:1px solid rgba(255,255,255,0.12); background:rgba(255,255,255,0.05);
+      color:var(--slate-300); transition:all .15s;
+    }
+    .pr-edit-btn:hover { background:rgba(255,255,255,0.1); color:#fff; }
+    .pr-save-btn {
+      padding:5px 13px; font-size:11.5px; font-weight:700;
+      border-radius:6px; cursor:pointer;
+      border:1px solid rgba(16,185,129,0.3); background:rgba(16,185,129,0.1);
+      color:#34d399; display:none; transition:all .15s;
+    }
+    .pr-save-btn:hover { background:rgba(16,185,129,0.2); }
+    .pr-cancel-btn {
+      padding:5px 11px; font-size:11.5px; font-weight:700;
+      border-radius:6px; cursor:pointer;
+      border:1px solid rgba(255,255,255,0.08); background:transparent;
+      color:var(--slate-500); display:none; transition:all .15s;
+    }
+    .pr-cancel-btn:hover { color:var(--slate-300); }
+
+    /* dim 卡片编辑态 */
+    .pr-dim-card.editing { border-color:rgba(220,38,38,0.4); background:var(--slate-750); }
+    .pr-dim-edit-area {
+      display:none; width:100%; min-height:70px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+      border-radius:6px; padding:8px 10px;
+      color:var(--slate-100); font-size:11.5px; font-family:inherit;
+      line-height:1.65; resize:vertical; outline:none;
+    }
+    .pr-dim-card.editing .pr-dim-body { display:none; }
+    .pr-dim-card.editing .pr-dim-edit-area { display:block; }
+
+    /* why 卡片编辑态 */
+    .pr-why-edit-area {
+      display:none; width:100%; min-height:60px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+      border-radius:6px; padding:8px 10px;
+      color:var(--slate-100); font-size:13px; font-family:inherit;
+      line-height:1.65; resize:vertical; outline:none;
+    }
+    .pr-why-card.editing { border-color:rgba(220,38,38,0.3); }
+    .pr-why-card.editing .pr-why-a { display:none; }
+    .pr-why-card.editing .pr-why-edit-area { display:block; }
+
+    /* 优先排序表编辑态 */
     .pr-output-section {
       opacity:0.3; transition:opacity .4s;
     }
@@ -790,6 +845,14 @@
       border:1px solid rgba(16,185,129,0.18);
       margin:2px 2px 2px 0;
     }
+    /* 优先排序行内编辑 */
+    .pr-priority-table input.pr-row-edit {
+      width:100%; background:rgba(255,255,255,0.05);
+      border:1px solid rgba(255,255,255,0.12); border-radius:5px;
+      color:var(--slate-100); font-size:12.5px; font-family:inherit;
+      padding:4px 8px; outline:none;
+    }
+    .pr-priority-table input.pr-row-edit:focus { border-color:rgba(220,38,38,0.4); }
 
     /* 操作按钮行 */
     .pr-action-row {
@@ -1787,6 +1850,11 @@ function openTask(phase, mod, task) {
   // 渲染工作区内容
   document.getElementById('ws-body').innerHTML = renderTaskContent(key);
 
+  // 1·1·1 预先研究：恢复已保存结果到 UI
+  if (key === '0-0-0') {
+    restorePreResearchResult();
+  }
+
   document.getElementById('workspace-overlay').classList.add('open');
 }
 
@@ -1798,6 +1866,49 @@ function renderTaskContent(key) {
     <p>此任务工作区内容建设中。</p>
     <span class="ws-coming-soon">⏳ 等待输入</span>
   </div>`;
+}
+
+// ────────────────────────────────────────────
+// 恢复已保存的预先研究结果到 UI
+// ────────────────────────────────────────────
+function restorePreResearchResult() {
+  const result = loadPrResult();
+  if (!result || (!result.dims && !result.whys && !result.priorities)) return;
+
+  const { dims, whys, priorities } = result;
+
+  // 恢复三维分析
+  if (dims && dims.length) {
+    dims.forEach((text, i) => {
+      const el = document.getElementById(`pr-dim-body-${i}`);
+      if (el) el.innerHTML = text;
+      const card = document.getElementById(`pr-dim-${i}`);
+      if (card) card.classList.add('lit');
+    });
+  }
+
+  // 恢复 3 WHYs
+  if (whys && whys.length) {
+    whys.forEach((text, i) => {
+      const el = document.getElementById(`pr-why-a-${i}`);
+      if (el) el.innerHTML = text;
+      const card = document.getElementById(`pr-why-${i}`);
+      if (card) card.classList.add('lit');
+    });
+  }
+
+  // 恢复优先排序
+  if (priorities && priorities.length) {
+    renderPriorityTable(priorities, false);
+    const sec = document.getElementById('pr-output-section');
+    if (sec) sec.classList.add('lit');
+  }
+
+  // 恢复按钮文案
+  const runBtn = document.getElementById('pr-run-btn');
+  if (runBtn && result.savedAt) {
+    runBtn.querySelector('.btn-label').textContent = '✓ 重新分析';
+  }
 }
 
 // ────────────────────────────────────────────
@@ -1838,7 +1949,7 @@ function renderPreResearch() {
         placeholder="领导层目前最担心什么风险？&#10;例：团队缺乏经营意识，忙于救火而非创造价值…">${esc(saved.concern||'')}</textarea>
     </div>
   </div>
-</div>
+</div>`;
 
 <!-- ② AI 分析引擎 -->
 <div class="ws-section">
@@ -1858,22 +1969,31 @@ function renderPreResearch() {
     <div class="pr-progress-track"><div class="pr-progress-fill" id="pr-fill"></div></div>
     <span class="pr-progress-text" id="pr-progress-text">SS 正在调取数据进行综合分析…</span>
   </div>
-  <!-- 三维分析卡 -->
+  <!-- 三维分析卡 + 编辑控制条 -->
+  <div class="pr-block-ctrl">
+    <span class="ctrl-saved-hint" id="dims-saved-hint">✓ 已保存</span>
+    <button class="pr-cancel-btn" id="dims-cancel-btn" onclick="cancelEditDims()">取消</button>
+    <button class="pr-save-btn" id="dims-save-btn" onclick="saveEditDims()">💾 保存修订</button>
+    <button class="pr-edit-btn" id="dims-edit-btn" onclick="startEditDims()">✏️ 编辑</button>
+  </div>
   <div class="pr-dims">
     <div class="pr-dim-card" id="pr-dim-0">
       <div class="pr-dim-icon">🏢</div>
       <div class="pr-dim-title">内部研究</div>
       <div class="pr-dim-body" id="pr-dim-body-0">业务战略与经营现状分析将在此呈现</div>
+      <textarea class="pr-dim-edit-area" id="pr-dim-edit-0" placeholder="编辑内部研究内容…"></textarea>
     </div>
     <div class="pr-dim-card" id="pr-dim-1">
       <div class="pr-dim-icon">🌐</div>
       <div class="pr-dim-title">外部研究</div>
       <div class="pr-dim-body" id="pr-dim-body-1">行业趋势与竞争环境分析将在此呈现</div>
+      <textarea class="pr-dim-edit-area" id="pr-dim-edit-1" placeholder="编辑外部研究内容…"></textarea>
     </div>
     <div class="pr-dim-card" id="pr-dim-2">
       <div class="pr-dim-icon">👥</div>
       <div class="pr-dim-title">人才研究</div>
       <div class="pr-dim-body" id="pr-dim-body-2">目标群体技能知识与绩效现状将在此呈现</div>
+      <textarea class="pr-dim-edit-area" id="pr-dim-edit-2" placeholder="编辑人才研究内容…"></textarea>
     </div>
   </div>
 </div>
@@ -1882,26 +2002,35 @@ function renderPreResearch() {
 <div class="ws-section">
   <div class="ws-section-title">③ 核心洞察 · The 3 WHYs</div>
   <div class="ws-section-desc">AI 自动回答三个关键决策问题，确保赋能设计锚定业务价值。</div>
+  <div class="pr-block-ctrl">
+    <span class="ctrl-saved-hint" id="whys-saved-hint">✓ 已保存</span>
+    <button class="pr-cancel-btn" id="whys-cancel-btn" onclick="cancelEditWhys()">取消</button>
+    <button class="pr-save-btn" id="whys-save-btn" onclick="saveEditWhys()">💾 保存修订</button>
+    <button class="pr-edit-btn" id="whys-edit-btn" onclick="startEditWhys()">✏️ 编辑</button>
+  </div>
   <div class="pr-whys">
     <div class="pr-why-card" id="pr-why-0">
       <div class="pr-why-badge">WHY<span>1</span></div>
-      <div>
+      <div style="flex:1">
         <div class="pr-why-q">为什么是这些人？ — 锁定关键受众</div>
         <div class="pr-why-a" id="pr-why-a-0">AI 分析后将自动填充……</div>
+        <textarea class="pr-why-edit-area" id="pr-why-edit-0" placeholder="编辑 WHY1 内容…"></textarea>
       </div>
     </div>
     <div class="pr-why-card" id="pr-why-1">
       <div class="pr-why-badge">WHY<span>2</span></div>
-      <div>
+      <div style="flex:1">
         <div class="pr-why-q">为什么是这个主题？ — 明确赋能核心</div>
         <div class="pr-why-a" id="pr-why-a-1">AI 分析后将自动填充……</div>
+        <textarea class="pr-why-edit-area" id="pr-why-edit-1" placeholder="编辑 WHY2 内容…"></textarea>
       </div>
     </div>
     <div class="pr-why-card" id="pr-why-2">
       <div class="pr-why-badge">WHY<span>3</span></div>
-      <div>
+      <div style="flex:1">
         <div class="pr-why-q">为什么现在是合适时机？ — 识别业务紧迫性</div>
         <div class="pr-why-a" id="pr-why-a-2">AI 分析后将自动填充……</div>
+        <textarea class="pr-why-edit-area" id="pr-why-edit-2" placeholder="编辑 WHY3 内容…"></textarea>
       </div>
     </div>
   </div>
@@ -1911,12 +2040,18 @@ function renderPreResearch() {
 <div class="ws-section pr-output-section" id="pr-output-section">
   <div class="ws-section-title">④ 业务赋能目标优先排序</div>
   <div class="ws-section-desc">基于三维分析与 3 WHYs 洞察，SS 综合生成以下优先排序建议。</div>
-  <table class="pr-priority-table">
+  <div class="pr-block-ctrl">
+    <span class="ctrl-saved-hint" id="prio-saved-hint">✓ 已保存</span>
+    <button class="pr-cancel-btn" id="prio-cancel-btn" onclick="cancelEditPrio()">取消</button>
+    <button class="pr-save-btn" id="prio-save-btn" onclick="saveEditPrio()">💾 保存修订</button>
+    <button class="pr-edit-btn" id="prio-edit-btn" onclick="startEditPrio()">✏️ 编辑</button>
+  </div>
+  <table class="pr-priority-table" id="pr-priority-table">
     <thead>
       <tr>
         <th style="width:52px">优先级</th>
         <th>业务赋能目标重点</th>
-        <th style="width:200px">对标 KPI 价值</th>
+        <th style="width:220px">对标 KPI 价值（逗号分隔）</th>
       </tr>
     </thead>
     <tbody id="pr-table-body">
@@ -1927,13 +2062,23 @@ function renderPreResearch() {
   </table>
   <div class="pr-action-row">
     <button class="pr-action-btn download" onclick="downloadPreResearchReport()">
-      ⬇ 下载预研报告模板
+      ⬇ 下载完整报告
     </button>
     <button class="pr-action-btn next" onclick="alert('任务 1·1·2 多维调研洞察即将开放，请先完成并保存本任务。')">
       跳转下一步：调研洞察 →
     </button>
   </div>
 </div>`;
+}
+
+// ────────────────────────────────────────────
+// 预先研究：洞察数据访问（供后继任务调用）
+// ────────────────────────────────────────────
+function getProjectInsights(projId) {
+  const id = projId || currentId;
+  if (!id) return null;
+  const p = projects.find(x => x.id === id);
+  return p?.insights || null;
 }
 
 // ────────────────────────────────────────────
@@ -2001,11 +2146,11 @@ async function runPreResearchAI() {
         const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || '{}');
         dims       = parsed.dims       || fallbackDims(industry, goal);
         whys       = parsed.whys       || fallbackWhys(industry, goal, expect_, concern);
-        priorities = parsed.priorities || fallbackPriorities(industry, goal);
+        priorities = parsed.priorities || fallbackPriorities(industry, goal, dims, whys);
       } catch(e) {
         dims       = fallbackDims(industry, goal);
         whys       = fallbackWhys(industry, goal, expect_, concern);
-        priorities = fallbackPriorities(industry, goal);
+        priorities = fallbackPriorities(industry, goal, dims, whys);
       }
     } else {
       // ─── 模板降级 ──────────────────────────────────
@@ -2015,7 +2160,7 @@ async function runPreResearchAI() {
       await sleep(600);
       dims       = fallbackDims(industry, goal);
       whys       = fallbackWhys(industry, goal, expect_, concern);
-      priorities = fallbackPriorities(industry, goal);
+      priorities = fallbackPriorities(industry, goal, dims, whys);
     }
 
     setProgress(100, '分析完成！');
@@ -2038,19 +2183,24 @@ async function runPreResearchAI() {
     await sleep(400);
 
     // ─── 渲染优先排序表 ────────────────────────────
-    const tbody = document.getElementById('pr-table-body');
-    const rankClasses = ['r1','r2','r3','r4','r5'];
-    tbody.innerHTML = priorities.map((row, i) => `
-      <tr>
-        <td style="text-align:center"><span class="pr-rank ${rankClasses[i]||'r5'}">${i+1}</span></td>
-        <td>${row.objective}</td>
-        <td>${row.kpi.map(k=>`<span class="pr-kpi-tag">${k}</span>`).join('')}</td>
-      </tr>`).join('');
+    renderPriorityTable(priorities, false);
 
     document.getElementById('pr-output-section').classList.add('lit');
 
-    // ─── 保存完整结果 ──────────────────────────────
-    localStorage.setItem('rh_pr_result_v1', JSON.stringify({ dims, whys, priorities, savedAt: Date.now() }));
+    // ─── 保存完整结果（localStorage + project.insights）──
+    const insightsPayload = { dims, whys, priorities,
+      input: { industry, goal, expect: expect_, concern },
+      savedAt: Date.now() };
+    localStorage.setItem('rh_pr_result_v1', JSON.stringify(insightsPayload));
+    // 同步写入当前项目
+    if (currentId) {
+      const idx = projects.findIndex(p => p.id === currentId);
+      if (idx >= 0) {
+        projects[idx].insights = insightsPayload;
+        projects[idx].updatedAt = Date.now();
+        saveProjects(projects);
+      }
+    }
 
     progressBar.classList.remove('visible');
 
@@ -2082,23 +2232,188 @@ function buildPreResearchPrompt(industry, goal, expect_, concern) {
 【输出格式】（严格 JSON，不要额外说明）
 {
   "dims": [
-    "内部研究：……（2-3句，聚焦战略与经营现状，结合用户输入）",
-    "外部研究：……（2-3句，聚焦行业趋势与竞争环境）",
-    "人才研究：……（2-3句，聚焦目标群体技能知识与绩效现状）"
+    "内部研究：……（2-3句，聚焦战略与经营现状，结合用户输入中的业务战略目标与高层期待）",
+    "外部研究：……（2-3句，聚焦行业趋势与竞争环境，结合行业特点）",
+    "人才研究：……（2-3句，聚焦目标群体技能知识与绩效现状，结合核心担忧）"
   ],
   "whys": [
-    "WHY1 受众锁定：……（1-2句，说明为什么是这些人）",
-    "WHY2 主题聚焦：……（1-2句，说明为什么是这个赋能主题）",
-    "WHY3 时机判断：……（1-2句，说明为什么现在是合适时机）"
+    "WHY1 受众锁定：……（1-2句，说明为什么是这些人，必须关联业务战略目标「${goal}」）",
+    "WHY2 主题聚焦：……（1-2句，说明为什么是这个赋能主题，必须对应内部研究中识别的能力差距）",
+    "WHY3 时机判断：……（1-2句，说明为什么现在是合适时机，必须关联核心担忧「${concern || '组织能力与业务脱节'}」）"
   ],
   "priorities": [
-    { "objective": "赋能目标描述（15字内）", "kpi": ["KPI指标1", "KPI指标2"] },
-    { "objective": "…", "kpi": ["…"] },
-    { "objective": "…", "kpi": ["…"] },
-    { "objective": "…", "kpi": ["…"] },
-    { "objective": "…", "kpi": ["…"] }
+    关键要求：每条赋能目标必须直接对应上方 dims 和 whys 中识别的具体差距，以「${goal}」为北极星，按业务影响力从高到低排序，目标描述20字内，KPI 必须可量化。
+    { "objective": "第1优先：……（直接对应 WHY2 识别的核心能力差距）", "kpi": ["关联业务目标的可测指标1", "指标2"] },
+    { "objective": "第2优先：……（对应人才研究中最显著的绩效差距）", "kpi": ["可测指标1", "指标2"] },
+    { "objective": "第3优先：……（支撑战略目标的次级能力）", "kpi": ["可测指标1"] },
+    { "objective": "第4优先：……（协同赋能的基础能力）", "kpi": ["可测指标1"] },
+    { "objective": "第5优先：……（长效机制与持续改进）", "kpi": ["可测指标1"] }
   ]
 }`;
+}
+
+// ────────────────────────────────────────────
+// 优先排序表渲染（viewMode=true 显示只读，false 显示编辑态）
+// ────────────────────────────────────────────
+function renderPriorityTable(priorities, editMode) {
+  const tbody = document.getElementById('pr-table-body');
+  const rankClasses = ['r1','r2','r3','r4','r5'];
+  if (editMode) {
+    tbody.innerHTML = priorities.map((row, i) => `
+      <tr data-idx="${i}">
+        <td style="text-align:center"><span class="pr-rank ${rankClasses[i]||'r5'}">${i+1}</span></td>
+        <td><input class="pr-row-edit" id="prio-obj-${i}" value="${esc(row.objective)}" placeholder="赋能目标描述" /></td>
+        <td><input class="pr-row-edit" id="prio-kpi-${i}" value="${esc(row.kpi.join(', '))}" placeholder="KPI1, KPI2…" /></td>
+      </tr>`).join('');
+  } else {
+    tbody.innerHTML = priorities.map((row, i) => `
+      <tr>
+        <td style="text-align:center"><span class="pr-rank ${rankClasses[i]||'r5'}">${i+1}</span></td>
+        <td>${esc(row.objective)}</td>
+        <td>${row.kpi.map(k=>`<span class="pr-kpi-tag">${esc(k)}</span>`).join('')}</td>
+      </tr>`).join('');
+  }
+}
+
+// ────────────────────────────────────────────
+// 区块编辑：三维分析
+// ────────────────────────────────────────────
+let _dimsBak = [];
+function startEditDims() {
+  const result = loadPrResult();
+  _dimsBak = result.dims ? [...result.dims] : [];
+  [0,1,2].forEach(i => {
+    const body = document.getElementById(`pr-dim-body-${i}`);
+    const area  = document.getElementById(`pr-dim-edit-${i}`);
+    // 把 HTML 内容去标签后填入 textarea
+    area.value = (body.innerHTML || '').replace(/<[^>]+>/g, '');
+    document.getElementById(`pr-dim-${i}`).classList.add('editing');
+  });
+  document.getElementById('dims-edit-btn').style.display   = 'none';
+  document.getElementById('dims-save-btn').style.display   = 'inline-flex';
+  document.getElementById('dims-cancel-btn').style.display = 'inline-flex';
+}
+function saveEditDims() {
+  const dims = [0,1,2].map(i => document.getElementById(`pr-dim-edit-${i}`).value.trim());
+  dims.forEach((text, i) => {
+    document.getElementById(`pr-dim-body-${i}`).innerHTML = text;
+    document.getElementById(`pr-dim-${i}`).classList.remove('editing');
+  });
+  // 更新存储
+  const result = loadPrResult();
+  result.dims = dims; result.savedAt = Date.now();
+  savePrResult(result);
+  document.getElementById('dims-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('dims-save-btn').style.display   = 'none';
+  document.getElementById('dims-cancel-btn').style.display = 'none';
+  flashHint('dims-saved-hint');
+}
+function cancelEditDims() {
+  [0,1,2].forEach(i => {
+    document.getElementById(`pr-dim-${i}`).classList.remove('editing');
+  });
+  document.getElementById('dims-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('dims-save-btn').style.display   = 'none';
+  document.getElementById('dims-cancel-btn').style.display = 'none';
+}
+
+// ────────────────────────────────────────────
+// 区块编辑：3 WHYs
+// ────────────────────────────────────────────
+function startEditWhys() {
+  [0,1,2].forEach(i => {
+    const a    = document.getElementById(`pr-why-a-${i}`);
+    const area = document.getElementById(`pr-why-edit-${i}`);
+    area.value = (a.innerHTML || '').replace(/<[^>]+>/g, '');
+    document.getElementById(`pr-why-${i}`).classList.add('editing');
+  });
+  document.getElementById('whys-edit-btn').style.display   = 'none';
+  document.getElementById('whys-save-btn').style.display   = 'inline-flex';
+  document.getElementById('whys-cancel-btn').style.display = 'inline-flex';
+}
+function saveEditWhys() {
+  const whys = [0,1,2].map(i => document.getElementById(`pr-why-edit-${i}`).value.trim());
+  whys.forEach((text, i) => {
+    document.getElementById(`pr-why-a-${i}`).innerHTML = text;
+    document.getElementById(`pr-why-${i}`).classList.remove('editing');
+  });
+  const result = loadPrResult();
+  result.whys = whys; result.savedAt = Date.now();
+  savePrResult(result);
+  document.getElementById('whys-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('whys-save-btn').style.display   = 'none';
+  document.getElementById('whys-cancel-btn').style.display = 'none';
+  flashHint('whys-saved-hint');
+}
+function cancelEditWhys() {
+  [0,1,2].forEach(i => document.getElementById(`pr-why-${i}`).classList.remove('editing'));
+  document.getElementById('whys-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('whys-save-btn').style.display   = 'none';
+  document.getElementById('whys-cancel-btn').style.display = 'none';
+}
+
+// ────────────────────────────────────────────
+// 区块编辑：优先排序
+// ────────────────────────────────────────────
+let _prioBak = [];
+function startEditPrio() {
+  const result = loadPrResult();
+  _prioBak = result.priorities ? JSON.parse(JSON.stringify(result.priorities)) : [];
+  renderPriorityTable(result.priorities || [], true);
+  document.getElementById('prio-edit-btn').style.display   = 'none';
+  document.getElementById('prio-save-btn').style.display   = 'inline-flex';
+  document.getElementById('prio-cancel-btn').style.display = 'inline-flex';
+}
+function saveEditPrio() {
+  const result = loadPrResult();
+  const count = (result.priorities || []).length;
+  const priorities = Array.from({length: count}, (_, i) => ({
+    objective: (document.getElementById(`prio-obj-${i}`)?.value || '').trim(),
+    kpi: (document.getElementById(`prio-kpi-${i}`)?.value || '').split(/[,，]+/).map(s=>s.trim()).filter(Boolean)
+  }));
+  result.priorities = priorities; result.savedAt = Date.now();
+  savePrResult(result);
+  renderPriorityTable(priorities, false);
+  document.getElementById('prio-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('prio-save-btn').style.display   = 'none';
+  document.getElementById('prio-cancel-btn').style.display = 'none';
+  flashHint('prio-saved-hint');
+}
+function cancelEditPrio() {
+  const result = loadPrResult();
+  renderPriorityTable(result.priorities || [], false);
+  document.getElementById('prio-edit-btn').style.display   = 'inline-flex';
+  document.getElementById('prio-save-btn').style.display   = 'none';
+  document.getElementById('prio-cancel-btn').style.display = 'none';
+}
+
+// ────────────────────────────────────────────
+// 存储辅助（优先从 project.insights，再 fallback localStorage）
+// ────────────────────────────────────────────
+function loadPrResult() {
+  if (currentId) {
+    const p = projects.find(x => x.id === currentId);
+    if (p?.insights) return JSON.parse(JSON.stringify(p.insights));
+  }
+  try { return JSON.parse(localStorage.getItem('rh_pr_result_v1') || '{}'); }
+  catch { return {}; }
+}
+function savePrResult(result) {
+  localStorage.setItem('rh_pr_result_v1', JSON.stringify(result));
+  if (currentId) {
+    const idx = projects.findIndex(p => p.id === currentId);
+    if (idx >= 0) {
+      projects[idx].insights = result;
+      projects[idx].updatedAt = Date.now();
+      saveProjects(projects);
+    }
+  }
+}
+function flashHint(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
 }
 
 // ────────────────────────────────────────────
@@ -2124,14 +2439,44 @@ function fallbackWhys(industry, goal, expect_, concern) {
     `高层担忧"${con.slice(0,30)}"正在窗口期内积累风险。当前是组织注意力高度聚焦战略目标的关键时间节点，此时启动赋能项目，最易获得资源支持与学员投入，转化效率最高。`
   ];
 }
-function fallbackPriorities(industry, goal) {
-  return [
-    { objective: '经营意识与目标分解能力', kpi: ['战略目标达成率', '团队 OKR 对齐度'] },
-    { objective: '客户价值挖掘与服务增值', kpi: ['客户满意度 NPS', '增值服务签约率'] },
-    { objective: '场景化问题分析与决策', kpi: ['关键事件处理周期', '一次性解决率'] },
-    { objective: '跨职能资源整合协作', kpi: ['项目协同效率', '内部满意度'] },
-    { objective: '数据化复盘与经验迁移', kpi: ['案例沉淀量', '最佳实践传播率'] }
+function fallbackPriorities(industry, goal, dims, whys) {
+  // 从 dims 和 whys 中提取核心词，做强相关推导
+  const ind = industry || '该行业';
+  const g   = goal     || '战略目标';
+
+  // 提取 dims 关键信息
+  const dimTexts = (dims || []).map(d => d.replace(/<[^>]+>/g,''));
+  const allContext = [...dimTexts, ...(whys||[])].join(' ');
+
+  // 基于业务目标关键词动态生成
+  const goalLower = g.toLowerCase();
+  const isGrowth  = /增长|提升|扩大|增加|growth/.test(goalLower);
+  const isCost    = /降本|成本|效率|优化|减少/.test(goalLower);
+  const isCustomer = /客户|服务|满意|体验|nps/.test(goalLower);
+  const isTech    = /数字|智能|数据|系统|技术/.test(goalLower);
+  const isLead    = /管理|领导|团队|人才|梯队/.test(goalLower);
+
+  const pool = [
+    { cond: isGrowth||true,   obj: `以「${g.slice(0,20)}」为锚的目标拆解能力`,
+      kpi: ['战略目标达成率', '季度 OKR 对齐度'] },
+    { cond: isCustomer||isGrowth, obj: `客户价值挖掘与增值场景识别`,
+      kpi: ['客户满意度 NPS', '增值服务渗透率'] },
+    { cond: isLead||true,     obj: `跨层级业务目标的承接与转化`,
+      kpi: ['目标逐层分解准确率', '一线行动转化率'] },
+    { cond: isCost||isGrowth, obj: `场景化问题诊断与资源优先配置`,
+      kpi: ['关键问题解决周期', '资源浪费率降低'] },
+    { cond: isTech||true,     obj: `数据驱动复盘与经验体系沉淀`,
+      kpi: ['最佳实践案例沉淀量', '能力可迁移率'] },
+    { cond: isCustomer,       obj: `高价值客户关系经营与忠诚度提升`,
+      kpi: ['高价值客户留存率', '复购/续签率'] },
+    { cond: isLead,           obj: `管理者教练能力与人才加速培育`,
+      kpi: ['核心人才留存率', '高潜提拔周期'] },
   ];
+
+  return pool
+    .sort((a, b) => (b.cond ? 1 : 0) - (a.cond ? 1 : 0))
+    .slice(0, 5)
+    .map(item => ({ objective: item.obj, kpi: item.kpi }));
 }
 
 // ────────────────────────────────────────────
