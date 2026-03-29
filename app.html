@@ -129,6 +129,80 @@
     }
     .sidebar-new-btn:hover { background:rgba(185,28,28,0.1); border-color:var(--red-600); }
 
+    /* ══ SIDEBAR PANEL TABS ══ */
+    .panel-tabs {
+      display:flex; padding:8px 12px 0;
+      gap:4px; flex-shrink:0;
+    }
+    .panel-tab {
+      flex:1; padding:6px 0; font-size:11.5px; font-weight:700;
+      border-radius:6px 6px 0 0; cursor:pointer;
+      border:1px solid transparent;
+      border-bottom:none; background:none;
+      color:var(--slate-500); text-align:center;
+      transition:color .15s, background .15s;
+      position:relative;
+    }
+    .panel-tab.active {
+      color:var(--slate-200); background:var(--slate-800);
+      border-color:rgba(255,255,255,0.07);
+    }
+    .panel-tab:not(.active):hover { color:var(--slate-400); }
+    .panel-tab .tab-badge {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:16px; height:16px; border-radius:50%;
+      background:rgba(239,68,68,0.25); color:var(--red-400);
+      font-size:9px; font-weight:900; margin-left:4px;
+    }
+
+    /* ══ TRASH ══ */
+    .trash-list { flex:1; overflow-y:auto; padding:4px 8px 16px; }
+    .trash-list::-webkit-scrollbar { width:4px; }
+    .trash-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:2px; }
+    .trash-item {
+      padding:10px; border-radius:8px; margin-bottom:2px;
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.05);
+    }
+    .trash-item-name {
+      font-size:12.5px; font-weight:600; color:var(--slate-500);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      margin-bottom:5px;
+    }
+    .trash-item-meta {
+      font-size:11px; color:var(--slate-700); margin-bottom:8px;
+    }
+    .trash-item-actions { display:flex; gap:6px; }
+    .trash-btn {
+      flex:1; padding:5px 0; font-size:11px; font-weight:700;
+      border-radius:5px; cursor:pointer; text-align:center;
+      border:1px solid; transition:background .15s;
+    }
+    .trash-btn-restore {
+      background:rgba(16,185,129,0.08); border-color:rgba(16,185,129,0.2);
+      color:#34d399;
+    }
+    .trash-btn-restore:hover { background:rgba(16,185,129,0.18); }
+    .trash-btn-delete {
+      background:rgba(239,68,68,0.06); border-color:rgba(239,68,68,0.18);
+      color:var(--red-500);
+    }
+    .trash-btn-delete:hover { background:rgba(239,68,68,0.16); }
+    .trash-empty {
+      padding:24px 14px; font-size:12px; color:var(--slate-700);
+      text-align:center;
+    }
+    .trash-footer {
+      padding:0 12px 10px; flex-shrink:0;
+    }
+    .trash-clear-btn {
+      width:100%; padding:8px;
+      border:1px solid rgba(239,68,68,0.2);
+      background:transparent; border-radius:7px;
+      color:var(--red-700); font-size:11.5px; font-weight:700;
+      cursor:pointer; transition:background .15s, color .15s;
+    }
+    .trash-clear-btn:hover { background:rgba(239,68,68,0.1); color:var(--red-500); }
+
     /* ══ MAIN ══ */
     .main { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
     .main::-webkit-scrollbar { width:6px; }
@@ -215,9 +289,9 @@
     .pib-cell:first-child { padding-left:8px; }
     .pib-cell:last-child { border-right:none; }
     .pib-label {
-      font-size:11px; font-weight:800; letter-spacing:1.5px;
-      text-transform:uppercase; color:var(--red-500);
-      margin-bottom:10px;
+      font-size:17px; font-weight:900; letter-spacing:0.5px;
+      color:var(--red-500);
+      margin-bottom:14px;
     }
     .pib-goal-text {
       font-size:15px; font-weight:600; color:var(--white);
@@ -257,9 +331,9 @@
     }
     .pfb-cell {}
     .pfb-label {
-      font-size:10px; font-weight:800; letter-spacing:1.5px;
-      text-transform:uppercase; color:var(--slate-600);
-      margin-bottom:10px;
+      font-size:14px; font-weight:800; letter-spacing:0.8px;
+      text-transform:uppercase; color:var(--slate-400);
+      margin-bottom:12px;
     }
     .pfb-tags { display:flex; flex-wrap:wrap; gap:6px; }
     .pib-tag {
@@ -317,10 +391,10 @@
     .module-3 .module-index { background:rgba(16,185,129,0.15); color:#34d399; }
     .module-title-group {}
     .module-title {
-      font-size:16px; font-weight:800; color:var(--white);
+      font-size:20px; font-weight:800; color:var(--white);
       margin-bottom:2px;
     }
-    .module-desc { font-size:12.5px; color:var(--slate-500); line-height:1.5; }
+    .module-desc { font-size:13px; color:var(--slate-500); line-height:1.5; }
     .module-progress {
       margin-left:auto; display:flex; align-items:center; gap:6px;
       font-size:11.5px; color:var(--slate-600); flex-shrink:0;
@@ -535,8 +609,8 @@
       margin-bottom:28px;
     }
     .ws-section-title {
-      font-size:13px; font-weight:800; color:var(--white);
-      margin-bottom:4px; display:flex; align-items:center; gap:8px;
+      font-size:16px; font-weight:800; color:var(--white);
+      margin-bottom:6px; display:flex; align-items:center; gap:8px;
     }
     .ws-section-title::after {
       content:''; flex:1; height:1px; background:rgba(255,255,255,0.06);
@@ -871,9 +945,25 @@
     <div class="sidebar-header">
       <input class="sidebar-search" type="text" id="project-search" placeholder="搜索项目…" oninput="filterProjects(this.value)" />
     </div>
-    <div class="sidebar-label">我的项目</div>
-    <div class="project-list" id="project-list"></div>
-    <button class="sidebar-new-btn" onclick="openNewModal()">＋ 新建项目</button>
+    <!-- Tab 切换 -->
+    <div class="panel-tabs">
+      <button class="panel-tab active" id="tab-projects" onclick="switchPanelTab('projects')">我的项目</button>
+      <button class="panel-tab" id="tab-trash" onclick="switchPanelTab('trash')">
+        回收站 <span class="tab-badge" id="trash-count" style="display:none">0</span>
+      </button>
+    </div>
+    <!-- 项目列表面板 -->
+    <div id="panel-projects" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+      <div class="project-list" id="project-list"></div>
+      <button class="sidebar-new-btn" onclick="openNewModal()">＋ 新建项目</button>
+    </div>
+    <!-- 回收站面板 -->
+    <div id="panel-trash" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+      <div class="trash-list" id="trash-list"></div>
+      <div class="trash-footer">
+        <button class="trash-clear-btn" onclick="clearTrash()">🗑 清空回收站</button>
+      </div>
+    </div>
   </aside>
 
   <!-- MAIN -->
@@ -1435,6 +1525,7 @@
 // DATA LAYER
 // ════════════════════════════════════════════
 const STORAGE_KEY = 'rh_projects_v1';
+const TRASH_KEY   = 'rh_trash_v1';
 const AI_KEY      = 'rh_ai_config_v1';
 
 function loadProjects() {
@@ -1443,6 +1534,13 @@ function loadProjects() {
 }
 function saveProjects(p) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+}
+function loadTrash() {
+  try { return JSON.parse(localStorage.getItem(TRASH_KEY)) || []; }
+  catch { return []; }
+}
+function saveTrash(t) {
+  localStorage.setItem(TRASH_KEY, JSON.stringify(t));
 }
 function loadAI() {
   try { return JSON.parse(localStorage.getItem(AI_KEY)) || {}; }
@@ -1566,14 +1664,97 @@ function saveProject() {
 
 function deleteCurrentProject() {
   if(!currentId) return;
-  if(!confirm('确定要删除这个项目吗？此操作不可撤销。')) return;
-  projects = projects.filter(p=>p.id!==currentId);
+  if(!confirm('确定删除此项目？项目将移入回收站，可在回收站中恢复。')) return;
+  const p = projects.find(x => x.id === currentId);
+  if (!p) return;
+  // 软删除：移入回收站
+  const trash = loadTrash();
+  trash.unshift({ ...p, deletedAt: Date.now() });
+  saveTrash(trash);
+  projects = projects.filter(x => x.id !== currentId);
   saveProjects(projects);
   currentId = null;
   document.getElementById('view-project').classList.remove('active');
   document.getElementById('view-welcome').classList.add('active');
   renderSidebar();
-  showToast('项目已删除');
+  renderTrash();
+  showToast('项目已移入回收站');
+}
+
+// ════════════════════════════════════════════
+// TRASH（回收站）
+// ════════════════════════════════════════════
+function renderTrash() {
+  const trash = loadTrash();
+  const badge = document.getElementById('trash-count');
+  if (trash.length) {
+    badge.textContent = trash.length;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+
+  const list = document.getElementById('trash-list');
+  if (!trash.length) {
+    list.innerHTML = `<div class="trash-empty">回收站是空的</div>`;
+    return;
+  }
+  list.innerHTML = trash.map(p => `
+    <div class="trash-item" id="trash-${p.id}">
+      <div class="trash-item-name">${esc(p.name)}</div>
+      <div class="trash-item-meta">删除于 ${formatDate(p.deletedAt)}${p.audience ? ' · ' + esc(p.audience) : ''}</div>
+      <div class="trash-item-actions">
+        <button class="trash-btn trash-btn-restore" onclick="restoreFromTrash('${p.id}')">↩ 恢复</button>
+        <button class="trash-btn trash-btn-delete" onclick="permanentDelete('${p.id}')">彻底删除</button>
+      </div>
+    </div>`).join('');
+}
+
+function restoreFromTrash(id) {
+  let trash = loadTrash();
+  const p = trash.find(x => x.id === id);
+  if (!p) return;
+  // 移除 deletedAt 字段，还原到项目列表
+  const { deletedAt, ...restored } = p;
+  restored.updatedAt = Date.now();
+  projects.unshift(restored);
+  saveProjects(projects);
+  trash = trash.filter(x => x.id !== id);
+  saveTrash(trash);
+  renderSidebar();
+  renderTrash();
+  showToast(`「${p.name}」已恢复`, 'success');
+  // 自动切回项目 Tab
+  switchPanelTab('projects');
+  selectProject(restored.id);
+}
+
+function permanentDelete(id) {
+  if (!confirm('彻底删除后无法恢复，确定吗？')) return;
+  let trash = loadTrash();
+  const p = trash.find(x => x.id === id);
+  trash = trash.filter(x => x.id !== id);
+  saveTrash(trash);
+  renderTrash();
+  showToast(p ? `「${p.name}」已彻底删除` : '已删除');
+}
+
+function clearTrash() {
+  const trash = loadTrash();
+  if (!trash.length) { showToast('回收站已是空的'); return; }
+  if (!confirm(`确定清空回收站中的 ${trash.length} 个项目？此操作不可撤销。`)) return;
+  saveTrash([]);
+  renderTrash();
+  showToast('回收站已清空');
+}
+
+function switchPanelTab(tab) {
+  const isProjects = tab === 'projects';
+  document.getElementById('tab-projects').classList.toggle('active', isProjects);
+  document.getElementById('tab-trash').classList.toggle('active', !isProjects);
+  document.getElementById('panel-projects').style.display = isProjects ? 'flex' : 'none';
+  document.getElementById('panel-trash').style.display    = isProjects ? 'none' : 'flex';
+  if (!isProjects) renderTrash();
 }
 
 // ════════════════════════════════════════════
@@ -2227,6 +2408,7 @@ function showToast(msg, type='') {
 // ════════════════════════════════════════════
 (function init(){
   renderSidebar();
+  renderTrash();
   updateAIStatus();
   // 如果只有一个项目，自动打开
   if(projects.length === 1) selectProject(projects[0].id);
