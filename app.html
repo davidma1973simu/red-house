@@ -155,6 +155,146 @@
       font-size:9px; font-weight:900; margin-left:4px;
     }
 
+    /* ══ SURVEY INSIGHT (1.1.2) ══ */
+    .si-input-grid {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:16px; margin-top:16px;
+    }
+    @media(max-width:900px){ .si-input-grid { grid-template-columns:1fr; } }
+    .si-input-card {
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px; padding:18px;
+      transition:border-color .2s;
+    }
+    .si-input-card:hover { border-color:rgba(220,38,38,0.25); }
+    .si-input-header {
+      display:flex; align-items:center; gap:10px; margin-bottom:12px;
+    }
+    .si-role-icon {
+      font-size:22px; width:38px; height:38px; display:flex;
+      align-items:center; justify-content:center;
+      background:rgba(220,38,38,0.1); border-radius:8px; flex-shrink:0;
+    }
+    .si-role-name {
+      font-size:14px; font-weight:800; color:var(--white); line-height:1.3;
+    }
+    .si-role-sub {
+      font-size:10px; font-weight:600; color:var(--slate-500); letter-spacing:0.5px;
+    }
+    .si-input-label {
+      font-size:10.5px; font-weight:700; color:var(--slate-400);
+      letter-spacing:0.5px; margin-bottom:7px; text-transform:uppercase;
+    }
+    .si-textarea {
+      width:100%; min-height:100px; resize:vertical;
+      background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1);
+      border-radius:8px; padding:10px 12px;
+      color:var(--slate-200); font-size:12.5px; line-height:1.65;
+      font-family:inherit; transition:border-color .15s;
+    }
+    .si-textarea:focus { outline:none; border-color:rgba(220,38,38,0.4); }
+    .si-file-label {
+      display:inline-flex; align-items:center; gap:5px; margin-top:8px;
+      font-size:11px; color:var(--slate-500); cursor:pointer;
+      padding:4px 8px; border:1px dashed rgba(255,255,255,0.1);
+      border-radius:6px; transition:color .15s, border-color .15s;
+    }
+    .si-file-label:hover { color:var(--slate-300); border-color:rgba(255,255,255,0.2); }
+    .si-file-input { display:none; }
+
+    /* ── 四层推导卡片 ── */
+    .si-layers {
+      display:flex; flex-direction:column; gap:10px; margin-top:14px;
+    }
+    .si-layer-card {
+      display:flex; gap:14px; align-items:flex-start;
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px; padding:16px 18px;
+      opacity:0.55; transition:opacity .4s, border-color .3s, background .3s;
+    }
+    .si-layer-card.lit {
+      opacity:1; border-color:rgba(255,255,255,0.12);
+      background:rgba(255,255,255,0.04);
+    }
+    .si-layer-badge {
+      flex-shrink:0; width:36px; height:36px; border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:900; letter-spacing:0.5px;
+    }
+    .si-layer-title {
+      font-size:14px; font-weight:800; color:var(--white);
+      margin-bottom:6px;
+    }
+    .si-layer-sub {
+      font-size:10px; font-weight:500; color:var(--slate-500);
+      margin-left:6px; letter-spacing:0.3px;
+    }
+    .si-layer-body {
+      font-size:13px; color:var(--slate-300); line-height:1.7;
+    }
+
+    /* ── 三项产出 ── */
+    .si-output-section {
+      opacity:0.7; transition:opacity .4s;
+    }
+    .si-output-section.lit { opacity:1; }
+    .si-output-block {
+      background:var(--slate-800); border:1px solid rgba(255,255,255,0.07);
+      border-radius:12px; padding:18px 20px; margin-bottom:16px;
+      transition:border-color .3s;
+    }
+    .si-output-block.lit { border-color:rgba(220,38,38,0.2); }
+    .si-out-block-title {
+      font-size:14px; font-weight:800; color:var(--white);
+      margin-bottom:12px; display:flex; align-items:center; gap:10px;
+    }
+    .si-out-idx {
+      width:26px; height:26px; border-radius:6px; flex-shrink:0;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:rgba(220,38,38,0.15); color:var(--red-400);
+      font-size:12px; font-weight:900;
+    }
+
+    /* 需求矩阵表格 */
+    .si-matrix-table {
+      width:100%; border-collapse:collapse; font-size:12.5px;
+    }
+    .si-matrix-table th {
+      background:rgba(255,255,255,0.05); color:var(--slate-300);
+      font-weight:700; text-align:left; padding:9px 12px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .si-matrix-table td {
+      padding:9px 12px; color:var(--slate-200); vertical-align:top;
+      border-bottom:1px solid rgba(255,255,255,0.04); line-height:1.6;
+    }
+    .si-matrix-table tr:last-child td { border-bottom:none; }
+    .si-matrix-table tr:hover td { background:rgba(255,255,255,0.025); }
+
+    /* 核心需求类别 */
+    .si-cats-grid {
+      display:flex; flex-wrap:wrap; gap:8px; padding:4px 0;
+    }
+    .si-cats-empty {
+      color:var(--slate-700); font-size:12px; padding:12px 0;
+    }
+    .si-cat-tag {
+      display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+      background:rgba(220,38,38,0.1); border:1px solid rgba(220,38,38,0.2);
+      border-radius:8px; padding:8px 14px;
+    }
+    .si-cat-label {
+      font-size:13px; font-weight:800; color:var(--red-300);
+    }
+    .si-cat-domain {
+      font-size:10.5px; color:var(--slate-400);
+    }
+
+    /* 需求本质报告 */
+    .si-essence-body {
+      font-size:13.5px; color:var(--slate-200); line-height:1.85;
+    }
+
     /* ══ TRASH ══ */
     .trash-list { flex:1; overflow-y:auto; padding:4px 8px 16px; }
     .trash-list::-webkit-scrollbar { width:4px; }
@@ -1152,18 +1292,31 @@
                   <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
                 </div>
               </div>
-              <!-- 任务 2：占位 -->
-              <div class="task-card locked" id="tc-0-0-1">
+              <!-- 任务 2：调研洞察 -->
+              <div class="task-card" id="tc-0-0-1" onclick="openTask(0,0,1)">
                 <div class="task-card-header">
                   <span class="task-num">任务 1·1·2</span>
-                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                  <span class="task-badge task-badge-active">进行中</span>
                 </div>
                 <div class="task-card-body">
-                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
-                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                  <div class="task-name">调研洞察</div>
+                  <div class="task-desc">基于业务赋能目标，从四个关键维度采集多元视角，AI 推导从现象到本质的四层洞察架构。</div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">输入</div>
+                    <span class="task-io-item input">高层领导期待与担心</span>
+                    <span class="task-io-item input">业务专家典型场景</span>
+                    <span class="task-io-item input">HRBP 能力差距数据</span>
+                    <span class="task-io-item input">高绩效员工关键动作</span>
+                  </div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">产出</div>
+                    <span class="task-io-item output">多维需求矩阵</span>
+                    <span class="task-io-item output">核心需求类别</span>
+                    <span class="task-io-item output">需求要素与本质报告</span>
+                  </div>
                 </div>
                 <div class="task-card-footer">
-                  <span class="task-locked-msg">🔒 完成任务1解锁</span>
+                  <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
                 </div>
               </div>
               <!-- 任务 3：占位 -->
@@ -1829,6 +1982,11 @@ const TASK_META = {
     name: '预先研究',
     phase: '洞察定义', module: '绩效洞察', num: '1·1·1',
     desc: '研究高层领导的需求——在业务、战略、变革、绩效等方面的目标下对组织和人才的方向性关注、期待和担心。'
+  },
+  '0-0-1': {
+    name: '调研洞察',
+    phase: '洞察定义', module: '绩效洞察', num: '1·1·2',
+    desc: '基于业务赋能目标，从四个关键维度采集多元视角，AI 推导从现象到本质的四层洞察架构，揭示影响绩效的核心驱动力。'
   }
   // 后续任务在此扩展
 };
@@ -1854,12 +2012,17 @@ function openTask(phase, mod, task) {
   if (key === '0-0-0') {
     restorePreResearchResult();
   }
+  // 1·1·2 调研洞察：恢复已保存结果到 UI
+  if (key === '0-0-1') {
+    restoreSurveyInsightResult();
+  }
 
   document.getElementById('workspace-overlay').classList.add('open');
 }
 
 function renderTaskContent(key) {
   if (key === '0-0-0') return renderPreResearch();
+  if (key === '0-0-1') return renderSurveyInsight();
   return `<div class="ws-placeholder">
     <div class="ph-icon">🚧</div>
     <h3>即将开放</h3>
@@ -2071,9 +2234,698 @@ function renderPreResearch() {
 </div>`;
 }
 
-// ────────────────────────────────────────────
+// ════════════════════════════════════════════
+// 任务 1·1·2  调研洞察
+// ════════════════════════════════════════════
+
+// ── 存储 ─────────────────────────────────────
+function loadSiData() {
+  try { return JSON.parse(localStorage.getItem('rh_si_data_v1') || '{}'); } catch(e) { return {}; }
+}
+function saveSiData(d) { localStorage.setItem('rh_si_data_v1', JSON.stringify(d)); }
+function loadSiResult() {
+  try { return JSON.parse(localStorage.getItem('rh_si_result_v1') || 'null'); } catch(e) { return null; }
+}
+function saveSiResult(r) { localStorage.setItem('rh_si_result_v1', JSON.stringify(r)); }
+
+// ── 渲染工作区 ────────────────────────────────
+function renderSurveyInsight() {
+  const saved = loadSiData();
+  const ins = getProjectInsights(); // 从预先研究读取已有目标
+  const goalHint = ins?.priorities?.[0]?.objective || '';
+
+  return `
+<!-- ① 四维度输入 -->
+<div class="ws-section">
+  <div class="ws-section-title">① 四维度调研输入</div>
+  <div class="ws-section-desc">针对四类关键人群收集结构化视角，以务虚为主。可直接填写，也可粘贴访谈记录。
+    ${goalHint ? `<br/><span style="color:var(--red-400);font-size:12px">📌 基于预先研究目标：${goalHint.slice(0,40)}…</span>` : ''}</div>
+
+  <div class="si-input-grid">
+
+    <!-- 高层领导 -->
+    <div class="si-input-card">
+      <div class="si-input-header">
+        <span class="si-role-icon">👔</span>
+        <div>
+          <div class="si-role-name">高层领导</div>
+          <div class="si-role-sub">Senior Leadership</div>
+        </div>
+      </div>
+      <div class="si-input-label">战略期待与 KPI 定性要求</div>
+      <textarea id="si-senior" class="si-textarea" placeholder="例：希望项目经理具备经营意识，能主动识别增值机会，而不只是执行命令。KPI 核心看续签率和客户满意度…">${esc(saved.senior||'')}</textarea>
+      <label class="si-file-label">📎 上传访谈记录
+        <input type="file" accept=".txt,.md,.pdf,.docx" class="si-file-input" onchange="handleSiFile(this,'si-senior')" />
+      </label>
+    </div>
+
+    <!-- 业务专家 -->
+    <div class="si-input-card">
+      <div class="si-input-header">
+        <span class="si-role-icon">🔧</span>
+        <div>
+          <div class="si-role-name">业务专家</div>
+          <div class="si-role-sub">Business Experts</div>
+        </div>
+      </div>
+      <div class="si-input-label">技术难点、高频场景与复杂挑战</div>
+      <textarea id="si-expert" class="si-textarea" placeholder="例：渠道决策周期长，信息不透明；新品上市时跨部门协作卡点多；客户异议处理缺乏系统方法…">${esc(saved.expert||'')}</textarea>
+      <label class="si-file-label">📎 上传访谈记录
+        <input type="file" accept=".txt,.md,.pdf,.docx" class="si-file-input" onchange="handleSiFile(this,'si-expert')" />
+      </label>
+    </div>
+
+    <!-- HRBP/TD -->
+    <div class="si-input-card">
+      <div class="si-input-header">
+        <span class="si-role-icon">📊</span>
+        <div>
+          <div class="si-role-name">人才发展专家</div>
+          <div class="si-role-sub">HRBP / TD</div>
+        </div>
+      </div>
+      <div class="si-input-label">能力现状、技能差距与绩效数据</div>
+      <textarea id="si-hrbp" class="si-textarea" placeholder="例：胜任力模型显示 65% 学员在「客户价值挖掘」维度处于初级水平；头部与尾部绩效差距约 3 倍；过去 6 个月培训覆盖率 40%…">${esc(saved.hrbp||'')}</textarea>
+      <label class="si-file-label">📎 上传访谈记录
+        <input type="file" accept=".txt,.md,.pdf,.docx" class="si-file-input" onchange="handleSiFile(this,'si-hrbp')" />
+      </label>
+    </div>
+
+    <!-- 高绩效员工 -->
+    <div class="si-input-card">
+      <div class="si-input-header">
+        <span class="si-role-icon">⭐</span>
+        <div>
+          <div class="si-role-name">高绩效员工</div>
+          <div class="si-role-sub">High-Performance Employees</div>
+        </div>
+      </div>
+      <div class="si-input-label">成功场景、实践行为与关键动作</div>
+      <textarea id="si-hiper" class="si-textarea" placeholder="例：每次客户拜访前会研究对方最新财报，用数据切入；遇到预算卡点会主动联系决策人而非等待；拿单后立刻制定 90 天服务计划…">${esc(saved.hiper||'')}</textarea>
+      <label class="si-file-label">📎 上传访谈记录
+        <input type="file" accept=".txt,.md,.pdf,.docx" class="si-file-input" onchange="handleSiFile(this,'si-hiper')" />
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② AI 四层推导 -->
+<div class="ws-section">
+  <div class="ws-section-title">② AI 四层推导 · 从现象到本质</div>
+  <div class="pr-analyze-bar">
+    <div class="pr-analyze-hint">
+      <b>SS 将对四个维度输入进行深度线形推演：</b><br/>
+      <span style="font-size:11.5px;color:var(--slate-600)">现象事实 → 共性规律 → 结构要素 → 价值信念，请先完善上方输入再启动</span>
+    </div>
+    <button class="pr-analyze-btn" id="si-run-btn" onclick="runSurveyInsightAI()">
+      <span class="btn-spinner"></span>
+      <span class="btn-label">✦ SS 启动洞察</span>
+    </button>
+  </div>
+  <div class="pr-progress-bar" id="si-progress">
+    <div class="pr-progress-track"><div class="pr-progress-fill" id="si-fill"></div></div>
+    <span class="pr-progress-text" id="si-progress-text">SS 正在汇总四维度信息…</span>
+  </div>
+
+  <!-- 四层推导卡 -->
+  <div class="pr-block-ctrl">
+    <span class="ctrl-saved-hint" id="si-layers-hint">✓ 已保存</span>
+    <button class="pr-cancel-btn" id="si-layers-cancel" onclick="cancelEditSiLayers()">取消</button>
+    <button class="pr-save-btn"   id="si-layers-save"   onclick="saveEditSiLayers()">💾 保存修订</button>
+    <button class="pr-edit-btn"   id="si-layers-edit"   onclick="startEditSiLayers()">✏️ 编辑</button>
+  </div>
+  <div class="si-layers">
+
+    <div class="si-layer-card" id="si-layer-0">
+      <div class="si-layer-badge" style="background:rgba(99,102,241,0.15);color:#a5b4fc">L1</div>
+      <div style="flex:1">
+        <div class="si-layer-title">现象和事实 <span class="si-layer-sub">Phenomena &amp; Facts</span></div>
+        <div class="si-layer-body" id="si-layer-body-0">AI 分析后将汇总四个维度的原始业务碎片描述……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-0" placeholder="编辑现象和事实……"></textarea>
+      </div>
+    </div>
+
+    <div class="si-layer-card" id="si-layer-1">
+      <div class="si-layer-badge" style="background:rgba(16,185,129,0.15);color:#6ee7b7">L2</div>
+      <div style="flex:1">
+        <div class="si-layer-title">共性和规律 <span class="si-layer-sub">Common Patterns</span></div>
+        <div class="si-layer-body" id="si-layer-body-1">AI 识别跨层级、跨岗位的共同痛点与反复出现的业务障碍……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-1" placeholder="编辑共性和规律……"></textarea>
+      </div>
+    </div>
+
+    <div class="si-layer-card" id="si-layer-2">
+      <div class="si-layer-badge" style="background:rgba(245,158,11,0.15);color:#fcd34d">L3</div>
+      <div style="flex:1">
+        <div class="si-layer-title">结构要素和驱动力 <span class="si-layer-sub">Structural Elements &amp; Drivers</span></div>
+        <div class="si-layer-body" id="si-layer-body-2">剖析规律背后的核心驱动力，例如「数据化决策机制缺失」……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-2" placeholder="编辑结构要素和驱动力……"></textarea>
+      </div>
+    </div>
+
+    <div class="si-layer-card" id="si-layer-3">
+      <div class="si-layer-badge" style="background:rgba(239,68,68,0.15);color:#fca5a5">L4</div>
+      <div style="flex:1">
+        <div class="si-layer-title">价值、文化和信念 <span class="si-layer-sub">Values, Culture &amp; Beliefs</span></div>
+        <div class="si-layer-body" id="si-layer-body-3">触达本质，明确业务赋能如何对齐组织文化与员工职业信念……</div>
+        <textarea class="pr-dim-edit-area" id="si-layer-edit-3" placeholder="编辑价值、文化和信念……"></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ③ 三项核心产出 -->
+<div class="ws-section si-output-section" id="si-output-section">
+  <div class="ws-section-title">③ 三项核心产出</div>
+  <div class="ws-section-desc">基于四层推导，SS 自动生成结构化产出，为后续「任务 1·1·3 分解目标」提供精准输入。</div>
+
+  <!-- 产出 A：多维需求矩阵 -->
+  <div class="si-output-block" id="si-out-a">
+    <div class="si-out-block-title">
+      <span class="si-out-idx">A</span> 各层级需求汇总 · 多维需求矩阵
+    </div>
+    <div class="pr-block-ctrl" style="margin-top:4px">
+      <span class="ctrl-saved-hint" id="si-matrix-hint">✓ 已保存</span>
+      <button class="pr-cancel-btn" id="si-matrix-cancel" onclick="cancelEditSiMatrix()">取消</button>
+      <button class="pr-save-btn"   id="si-matrix-save"   onclick="saveEditSiMatrix()">💾 保存修订</button>
+      <button class="pr-edit-btn"   id="si-matrix-edit"   onclick="startEditSiMatrix()">✏️ 编辑</button>
+    </div>
+    <div id="si-matrix-body">
+      <table class="si-matrix-table">
+        <thead><tr>
+          <th>维度</th><th>核心期待</th><th>主要担心</th><th>关键输入要点</th>
+        </tr></thead>
+        <tbody id="si-matrix-tbody">
+          <tr><td colspan="4" style="text-align:center;color:var(--slate-700);padding:20px">AI 分析后自动生成 →</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <textarea class="pr-dim-edit-area" id="si-matrix-edit-area" placeholder="编辑需求矩阵（JSON 格式）……" style="min-height:100px"></textarea>
+  </div>
+
+  <!-- 产出 B：核心需求类别 -->
+  <div class="si-output-block" id="si-out-b">
+    <div class="si-out-block-title">
+      <span class="si-out-idx">B</span> 核心需求类别 · 分类分级
+    </div>
+    <div class="pr-block-ctrl" style="margin-top:4px">
+      <span class="ctrl-saved-hint" id="si-cats-hint">✓ 已保存</span>
+      <button class="pr-cancel-btn" id="si-cats-cancel" onclick="cancelEditSiCats()">取消</button>
+      <button class="pr-save-btn"   id="si-cats-save"   onclick="saveEditSiCats()">💾 保存修订</button>
+      <button class="pr-edit-btn"   id="si-cats-edit"   onclick="startEditSiCats()">✏️ 编辑</button>
+    </div>
+    <div class="si-cats-grid" id="si-cats-body">
+      <div class="si-cats-empty">AI 分析后自动生成 →</div>
+    </div>
+    <textarea class="pr-dim-edit-area" id="si-cats-edit-area" placeholder="编辑核心需求类别……" style="min-height:80px"></textarea>
+  </div>
+
+  <!-- 产出 C：需求要素与本质报告 -->
+  <div class="si-output-block" id="si-out-c">
+    <div class="si-out-block-title">
+      <span class="si-out-idx">C</span> 需求要素与本质 · 赋能洞察报告
+    </div>
+    <div class="pr-block-ctrl" style="margin-top:4px">
+      <span class="ctrl-saved-hint" id="si-essence-hint">✓ 已保存</span>
+      <button class="pr-cancel-btn" id="si-essence-cancel" onclick="cancelEditSiEssence()">取消</button>
+      <button class="pr-save-btn"   id="si-essence-save"   onclick="saveEditSiEssence()">💾 保存修订</button>
+      <button class="pr-edit-btn"   id="si-essence-edit"   onclick="startEditSiEssence()">✏️ 编辑</button>
+    </div>
+    <div class="si-essence-body" id="si-essence-body">AI 分析后自动生成核心洞察报告……</div>
+    <textarea class="pr-dim-edit-area" id="si-essence-edit-area" placeholder="编辑需求要素与本质……" style="min-height:100px"></textarea>
+  </div>
+
+  <!-- 行动按钮 -->
+  <div class="pr-action-row">
+    <button class="pr-action-btn download" onclick="downloadSurveyInsightReport()">⬇ 下载洞察报告</button>
+    <button class="pr-action-btn next" onclick="alert('任务 1·1·3 分解目标即将开放，请先保存本任务产出。')">跳转下一步：分解目标 →</button>
+  </div>
+</div>`;
+}
+
+// ── 文件上传处理（读取文本内容追加到对应 textarea）──────
+function handleSiFile(input, targetId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const ta = document.getElementById(targetId);
+    if (ta) {
+      ta.value = (ta.value ? ta.value + '\n\n--- 上传文件内容 ---\n' : '') + e.target.result;
+    }
+    showToast(`已读入「${file.name}」`, 'success');
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// ── 恢复已保存结果 ───────────────────────────────────────
+function restoreSurveyInsightResult() {
+  const result = loadSiResult();
+  if (!result) return;
+  const { layers, matrix, categories, essence } = result;
+
+  if (layers?.length) {
+    layers.forEach((text, i) => {
+      const el = document.getElementById(`si-layer-body-${i}`);
+      if (el) el.innerHTML = text;
+      const card = document.getElementById(`si-layer-${i}`);
+      if (card) card.classList.add('lit');
+    });
+  }
+  if (matrix?.length) renderSiMatrix(matrix, false);
+  if (categories?.length) renderSiCategories(categories, false);
+  if (essence) {
+    const el = document.getElementById('si-essence-body');
+    if (el) el.innerHTML = essence;
+    document.getElementById('si-out-c')?.classList.add('lit');
+  }
+  const runBtn = document.getElementById('si-run-btn');
+  if (runBtn && result.savedAt) runBtn.querySelector('.btn-label').textContent = '✓ 重新洞察';
+}
+
+// ── 渲染需求矩阵表格 ─────────────────────────────────────
+function renderSiMatrix(data, animate = true) {
+  const tbody = document.getElementById('si-matrix-tbody');
+  if (!tbody) return;
+  const roles = ['高层领导','业务专家','HRBP/TD','高绩效员工'];
+  tbody.innerHTML = (data || []).map((row, i) => `
+    <tr>
+      <td><b>${roles[i] || row.role || `维度${i+1}`}</b></td>
+      <td>${row.expect || '—'}</td>
+      <td>${row.concern || '—'}</td>
+      <td>${row.key || '—'}</td>
+    </tr>`).join('');
+  if (animate) {
+    document.getElementById('si-out-a')?.classList.add('lit');
+  }
+}
+
+// ── 渲染核心需求类别 ─────────────────────────────────────
+function renderSiCategories(data, animate = true) {
+  const el = document.getElementById('si-cats-body');
+  if (!el || !data?.length) return;
+  el.innerHTML = data.map(cat => `
+    <div class="si-cat-tag">
+      <span class="si-cat-label">${cat.label}</span>
+      <span class="si-cat-domain">${cat.domain || ''}</span>
+    </div>`).join('');
+  if (animate) document.getElementById('si-out-b')?.classList.add('lit');
+}
+
+// ── 编辑控制：四层推导 ────────────────────────────────────
+function startEditSiLayers() {
+  for (let i=0; i<4; i++) {
+    const body = document.getElementById(`si-layer-body-${i}`);
+    const edit = document.getElementById(`si-layer-edit-${i}`);
+    if (body && edit) { edit.value = body.innerText || body.textContent; edit.style.display='block'; body.style.display='none'; }
+  }
+  toggleSiCtrl('layers', 'edit');
+}
+function cancelEditSiLayers() {
+  for (let i=0; i<4; i++) {
+    const body = document.getElementById(`si-layer-body-${i}`);
+    const edit = document.getElementById(`si-layer-edit-${i}`);
+    if (body && edit) { edit.style.display='none'; body.style.display=''; }
+  }
+  toggleSiCtrl('layers', 'view');
+}
+function saveEditSiLayers() {
+  const layers = [];
+  for (let i=0; i<4; i++) {
+    const body = document.getElementById(`si-layer-body-${i}`);
+    const edit = document.getElementById(`si-layer-edit-${i}`);
+    if (body && edit) { body.textContent = edit.value; edit.style.display='none'; body.style.display=''; }
+    layers.push(body?.innerHTML || '');
+  }
+  const result = loadSiResult() || {};
+  result.layers = layers; result.savedAt = Date.now();
+  saveSiResult(result);
+  toggleSiCtrl('layers', 'saved');
+  showToast('四层推导已保存', 'success');
+  syncSiToProject();
+}
+
+// ── 编辑控制：需求矩阵 ────────────────────────────────────
+function startEditSiMatrix() {
+  const result = loadSiResult() || {};
+  const ta = document.getElementById('si-matrix-edit-area');
+  const body = document.getElementById('si-matrix-body');
+  if (ta) { ta.value = JSON.stringify(result.matrix||[], null, 2); ta.style.display='block'; }
+  if (body) body.style.display='none';
+  toggleSiCtrl('matrix', 'edit');
+}
+function cancelEditSiMatrix() {
+  const ta = document.getElementById('si-matrix-edit-area');
+  const body = document.getElementById('si-matrix-body');
+  if (ta) ta.style.display='none';
+  if (body) body.style.display='';
+  toggleSiCtrl('matrix', 'view');
+}
+function saveEditSiMatrix() {
+  const ta = document.getElementById('si-matrix-edit-area');
+  const body = document.getElementById('si-matrix-body');
+  try {
+    const data = JSON.parse(ta?.value || '[]');
+    renderSiMatrix(data, false);
+    const result = loadSiResult() || {};
+    result.matrix = data; result.savedAt = Date.now();
+    saveSiResult(result);
+    if (ta) ta.style.display='none';
+    if (body) body.style.display='';
+    toggleSiCtrl('matrix', 'saved');
+    showToast('需求矩阵已保存', 'success');
+    syncSiToProject();
+  } catch(e) { showToast('JSON 格式有误，请检查', 'error'); }
+}
+
+// ── 编辑控制：核心需求类别 ───────────────────────────────
+function startEditSiCats() {
+  const result = loadSiResult() || {};
+  const ta = document.getElementById('si-cats-edit-area');
+  const body = document.getElementById('si-cats-body');
+  if (ta) { ta.value = (result.categories||[]).map(c=>`${c.label}${c.domain?'|'+c.domain:''}`).join('\n'); ta.style.display='block'; }
+  if (body) body.style.display='none';
+  toggleSiCtrl('cats', 'edit');
+}
+function cancelEditSiCats() {
+  const ta = document.getElementById('si-cats-edit-area');
+  const body = document.getElementById('si-cats-body');
+  if (ta) ta.style.display='none';
+  if (body) body.style.display='';
+  toggleSiCtrl('cats', 'view');
+}
+function saveEditSiCats() {
+  const ta = document.getElementById('si-cats-edit-area');
+  const body = document.getElementById('si-cats-body');
+  const lines = (ta?.value||'').split('\n').filter(l=>l.trim());
+  const data = lines.map(l => { const parts = l.split('|'); return {label: parts[0].trim(), domain: parts[1]?.trim()||''}; });
+  renderSiCategories(data, false);
+  const result = loadSiResult() || {};
+  result.categories = data; result.savedAt = Date.now();
+  saveSiResult(result);
+  if (ta) ta.style.display='none';
+  if (body) body.style.display='';
+  toggleSiCtrl('cats', 'saved');
+  showToast('需求类别已保存', 'success');
+  syncSiToProject();
+}
+
+// ── 编辑控制：需求要素与本质 ─────────────────────────────
+function startEditSiEssence() {
+  const body = document.getElementById('si-essence-body');
+  const ta = document.getElementById('si-essence-edit-area');
+  if (ta && body) { ta.value = body.innerText || body.textContent; ta.style.display='block'; body.style.display='none'; }
+  toggleSiCtrl('essence', 'edit');
+}
+function cancelEditSiEssence() {
+  const body = document.getElementById('si-essence-body');
+  const ta = document.getElementById('si-essence-edit-area');
+  if (ta) ta.style.display='none';
+  if (body) body.style.display='';
+  toggleSiCtrl('essence', 'view');
+}
+function saveEditSiEssence() {
+  const body = document.getElementById('si-essence-body');
+  const ta = document.getElementById('si-essence-edit-area');
+  if (body && ta) { body.textContent = ta.value; ta.style.display='none'; body.style.display=''; }
+  const result = loadSiResult() || {};
+  result.essence = body?.innerHTML; result.savedAt = Date.now();
+  saveSiResult(result);
+  toggleSiCtrl('essence', 'saved');
+  showToast('需求本质报告已保存', 'success');
+  syncSiToProject();
+}
+
+// ── 辅助：切换编辑控制条状态 ─────────────────────────────
+function toggleSiCtrl(block, state) {
+  const hint   = document.getElementById(`si-${block}-hint`);
+  const cancel = document.getElementById(`si-${block}-cancel`);
+  const save   = document.getElementById(`si-${block}-save`);
+  const edit   = document.getElementById(`si-${block}-edit`);
+  if (!hint) return;
+  if (state === 'edit') {
+    if (hint) hint.style.display='none';
+    if (cancel) cancel.style.display='inline-flex';
+    if (save)   save.style.display='inline-flex';
+    if (edit)   edit.style.display='none';
+  } else if (state === 'saved') {
+    if (hint) { hint.style.display='inline-flex'; hint.textContent='✓ 已保存'; hint.style.opacity='1'; setTimeout(()=>{hint.style.opacity='0';},2500); }
+    if (cancel) cancel.style.display='none';
+    if (save)   save.style.display='none';
+    if (edit)   edit.style.display='inline-flex';
+  } else {
+    if (hint) hint.style.display='none';
+    if (cancel) cancel.style.display='none';
+    if (save)   save.style.display='none';
+    if (edit)   edit.style.display='inline-flex';
+  }
+}
+
+// ── 将调研洞察产出同步写入 project.surveyInsight ─────────
+function syncSiToProject() {
+  if (!currentId) return;
+  const result = loadSiResult();
+  if (!result) return;
+  const idx = projects.findIndex(p => p.id === currentId);
+  if (idx < 0) return;
+  projects[idx].surveyInsight = result;
+  projects[idx].updatedAt = Date.now();
+  saveProjects(projects);
+}
+
+// ── 下载调研洞察报告 ─────────────────────────────────────
+function downloadSurveyInsightReport() {
+  const result = loadSiResult();
+  if (!result || (!result.layers && !result.matrix)) {
+    showToast('请先启动 AI 洞察分析并保存产出', 'error'); return;
+  }
+  const p = projects.find(x => x.id === currentId);
+  const title = p?.name || '项目';
+  const layerNames = ['现象和事实','共性和规律','结构要素和驱动力','价值、文化和信念'];
+  let md = `# ${title} · 调研洞察报告\n\n_生成时间：${new Date().toLocaleString('zh-CN')}_\n\n---\n\n`;
+  md += `## 一、四层推导洞察\n\n`;
+  (result.layers||[]).forEach((t,i)=>{
+    const clean = t.replace(/<[^>]+>/g,'');
+    md += `### L${i+1} ${layerNames[i]}\n${clean}\n\n`;
+  });
+  md += `## 二、各层级需求矩阵\n\n| 维度 | 核心期待 | 主要担心 | 关键输入要点 |\n|---|---|---|---|\n`;
+  const roles = ['高层领导','业务专家','HRBP/TD','高绩效员工'];
+  (result.matrix||[]).forEach((row,i)=>{
+    md += `| ${roles[i]||row.role||''} | ${row.expect||''} | ${row.concern||''} | ${row.key||''} |\n`;
+  });
+  md += `\n## 三、核心需求类别\n\n`;
+  (result.categories||[]).forEach(c => { md += `- **${c.label}**${c.domain?'（'+c.domain+'）':''}\n`; });
+  md += `\n## 四、需求要素与本质\n\n${(result.essence||'').replace(/<[^>]+>/g,'')}\n`;
+
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${title}_调研洞察报告_${new Date().toISOString().slice(0,10)}.md`;
+  a.click();
+  showToast('报告已下载', 'success');
+}
+
+// ── AI 核心：调研洞察分析 ────────────────────────────────
+async function runSurveyInsightAI() {
+  const senior = document.getElementById('si-senior')?.value?.trim();
+  const expert = document.getElementById('si-expert')?.value?.trim();
+  const hrbp   = document.getElementById('si-hrbp')?.value?.trim();
+  const hiper  = document.getElementById('si-hiper')?.value?.trim();
+
+  if (!senior && !expert && !hrbp && !hiper) {
+    alert('请至少填写一个维度的调研内容后再启动洞察分析。'); return;
+  }
+  saveSiData({ senior, expert, hrbp, hiper });
+
+  const btn = document.getElementById('si-run-btn');
+  btn.classList.add('running'); btn.disabled = true;
+
+  const progressBar = document.getElementById('si-progress');
+  const fill = document.getElementById('si-fill');
+  const progressText = document.getElementById('si-progress-text');
+  progressBar.classList.add('visible');
+
+  let pct = 0;
+  const setProgress = (p, txt) => {
+    pct = p; fill.style.width = p + '%';
+    if (txt) progressText.textContent = txt;
+  };
+
+  try {
+    const aiCfg = loadAI();
+    const useAI = aiCfg.enabled && aiCfg.apiKey;
+
+    setProgress(10, 'SS 正在汇总四个维度的原始信息…');
+    await sleep(800);
+    setProgress(28, 'SS 正在识别跨层级共性规律…');
+    await sleep(800);
+    setProgress(48, 'SS 正在剖析结构要素与驱动力…');
+    await sleep(800);
+    setProgress(65, 'SS 正在触达价值文化与信念本质…');
+
+    let layers, matrix, categories, essence;
+
+    if (useAI) {
+      const ins = getProjectInsights();
+      const prompt = buildSurveyInsightPrompt(senior, expert, hrbp, hiper, ins);
+      setProgress(72, 'SS 正在进行 AI 深度推演…  预计还需 15 秒');
+      const raw = await callAI(aiCfg, prompt);
+      setProgress(90, 'SS 正在生成结构化产出…');
+      await sleep(500);
+      try {
+        const parsed = JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0] || '{}');
+        layers     = parsed.layers     || fallbackSiLayers(senior, expert, hrbp, hiper);
+        matrix     = parsed.matrix     || fallbackSiMatrix(senior, expert, hrbp, hiper);
+        categories = parsed.categories || fallbackSiCategories(senior, expert, hrbp, hiper);
+        essence    = parsed.essence    || fallbackSiEssence(senior, expert, hrbp, hiper);
+      } catch(e) {
+        layers     = fallbackSiLayers(senior, expert, hrbp, hiper);
+        matrix     = fallbackSiMatrix(senior, expert, hrbp, hiper);
+        categories = fallbackSiCategories(senior, expert, hrbp, hiper);
+        essence    = fallbackSiEssence(senior, expert, hrbp, hiper);
+      }
+    } else {
+      layers     = fallbackSiLayers(senior, expert, hrbp, hiper);
+      matrix     = fallbackSiMatrix(senior, expert, hrbp, hiper);
+      categories = fallbackSiCategories(senior, expert, hrbp, hiper);
+      essence    = fallbackSiEssence(senior, expert, hrbp, hiper);
+      await sleep(600);
+    }
+
+    setProgress(100, '✅ 洞察分析完成！');
+    await sleep(500);
+    progressBar.classList.remove('visible');
+
+    // 渲染四层推导
+    layers.forEach((text, i) => {
+      const el = document.getElementById(`si-layer-body-${i}`);
+      if (el) el.innerHTML = text;
+      const card = document.getElementById(`si-layer-${i}`);
+      if (card) card.classList.add('lit');
+    });
+
+    // 渲染三项产出
+    renderSiMatrix(matrix);
+    renderSiCategories(categories);
+    const essenceEl = document.getElementById('si-essence-body');
+    if (essenceEl) essenceEl.innerHTML = essence;
+    document.getElementById('si-out-c')?.classList.add('lit');
+    document.getElementById('si-output-section')?.classList.add('lit');
+
+    // 保存
+    const result = { layers, matrix, categories, essence, savedAt: Date.now() };
+    saveSiResult(result);
+    syncSiToProject();
+
+    btn.classList.remove('running'); btn.disabled = false;
+    btn.querySelector('.btn-label').textContent = '✓ 重新洞察';
+    showToast('调研洞察完成并已自动保存', 'success');
+
+  } catch(err) {
+    progressBar.classList.remove('visible');
+    btn.classList.remove('running'); btn.disabled = false;
+    console.error('SI AI error:', err);
+    showToast('分析失败：' + err.message, 'error');
+  }
+}
+
+// ── AI Prompt ────────────────────────────────────────────
+function buildSurveyInsightPrompt(senior, expert, hrbp, hiper, prInsights) {
+  const goal = prInsights?.priorities?.[0]?.objective || '业务赋能目标';
+  return `你是企业人才发展与业务赋能专家（SS 方法论顾问）。
+请基于以下四个维度的调研输入，进行深度线形推演，以 JSON 格式输出调研洞察报告。
+
+【业务赋能目标（来自预先研究）】：${goal}
+
+【四维度调研输入】
+- 高层领导（Senior Leadership）：${senior || '（未填写）'}
+- 业务专家（Business Experts）：${expert || '（未填写）'}
+- 人才发展专家 HRBP/TD：${hrbp || '（未填写）'}
+- 高绩效员工（High-Performance）：${hiper || '（未填写）'}
+
+【输出格式】（严格 JSON，不要额外说明）
+{
+  "layers": [
+    "L1 现象和事实：……（2-4句，汇总四个维度中的原始业务碎片，保留具体词汇和数字，不要抽象）",
+    "L2 共性和规律：……（2-3句，识别跨层级、跨岗位重复出现的痛点和障碍规律）",
+    "L3 结构要素和驱动力：……（2-3句，点明根因，例如'数据化决策机制缺失'是效率低的核心驱动力）",
+    "L4 价值、文化和信念：……（1-2句，触达本质，回答赋能如何与组织文化和员工信念对齐）"
+  ],
+  "matrix": [
+    {"role":"高层领导","expect":"核心期待（15字内）","concern":"主要担心（15字内）","key":"关键输入要点（20字内）"},
+    {"role":"业务专家","expect":"…","concern":"…","key":"…"},
+    {"role":"HRBP/TD","expect":"…","concern":"…","key":"…"},
+    {"role":"高绩效员工","expect":"…","concern":"…","key":"…"}
+  ],
+  "categories": [
+    {"label":"战略认同类","domain":"核心应用领域（10字内）"},
+    {"label":"流程协同类","domain":"…"},
+    {"label":"业务增长类","domain":"…"},
+    {"label":"能力建设类","domain":"…"}
+  ],
+  "essence": "需求要素与本质报告：……（3-5句，回答'这次业务赋能到底解决了什么底层问题'，从现象→规律→驱动力→价值信念逐层递进，最后点明业务赋能的核心价值命题）"
+}`;
+}
+
+// ── Fallback：离线模板 ───────────────────────────────────
+function fallbackSiLayers(senior, expert, hrbp, hiper) {
+  const hasSenior  = (senior||'').length > 10;
+  const hasExpert  = (expert||'').length > 10;
+  const hasHrbp    = (hrbp  ||'').length > 10;
+  const hasHiper   = (hiper ||'').length > 10;
+  const filled     = [hasSenior, hasExpert, hasHrbp, hasHiper].filter(Boolean).length;
+
+  const l1 = hasSenior
+    ? `高层对组织能力提出明确期待，核心诉求包含：${senior.slice(0,40)}……；` +
+      (hasExpert ? `业务侧反映的实际障碍为：${expert.slice(0,30)}……；` : '') +
+      (hasHrbp   ? `人才侧数据显示：${hrbp.slice(0,30)}……` : '')
+    : `从${filled}个维度收集到业务碎片描述，涉及战略目标承接、业务执行断层与人才能力差距等现象。`;
+
+  const l2 = `跨维度分析发现共同规律：高层期待与业务实际执行之间存在认知断层，业务专家描述的操作难点与高绩效行为之间存在结构化差距，${hasHrbp ? '胜任力数据进一步印证了能力分布不均的现象' : '人才侧信息待补充以验证规律'}。`;
+
+  const l3 = `核心驱动力有三：① 目标承接机制缺失——战略目标未有效转化为个人可执行的行动清单；② 场景化学习缺位——现有培训脱离真实业务场景，无法产生行为迁移；③ ${hasHiper ? '高绩效行为未被系统萃取与复制，依赖个人经验而非组织能力' : '优秀实践难以复制，组织知识沉淀不足'}。`;
+
+  const l4 = `本次业务赋能的本质，是在组织「结果导向」文化下，帮助员工建立「我能通过刻意练习突破绩效天花板」的信念，将外部业务压力转化为个人成长的驱动力，实现业务与人才同步升级。`;
+
+  return [l1, l2, l3, l4];
+}
+
+function fallbackSiMatrix(senior, expert, hrbp, hiper) {
+  return [
+    { role:'高层领导',    expect:'战略落地与关键 KPI 达成',      concern:'培训与业务脱节，投入产出比低', key:(senior||'期待组织能力与业绩目标对齐').slice(0,40) },
+    { role:'业务专家',    expect:'解决实际业务中的技术难点',      concern:'场景太复杂，通用方案不适用',   key:(expert||'高频场景和复杂挑战的应对方法').slice(0,40) },
+    { role:'HRBP/TD',    expect:'可量化的行为改变与能力提升',     concern:'学习转化率低，效果难评估',     key:(hrbp||'能力差距与胜任力模型数据').slice(0,40) },
+    { role:'高绩效员工',  expect:'最佳实践被认可并系统化传承',     concern:'被占用太多时间，干扰正常工作', key:(hiper||'成功场景与关键动作的萃取与传播').slice(0,40) }
+  ];
+}
+
+function fallbackSiCategories(senior, expert, hrbp, hiper) {
+  const all = [senior, expert, hrbp, hiper].join(' ');
+  return [
+    { label:'战略认同类', domain: /变革|转型|战略/.test(all) ? '变革与战略对齐' : '目标共识与方向对齐' },
+    { label:'业务增长类', domain: /签约|营收|客户|增长/.test(all) ? '客户价值与销售增长' : '业绩提升与增长驱动' },
+    { label:'流程协同类', domain: /协作|流程|跨部门|信息/.test(all) ? '跨部门协作与流程优化' : '效率提升与流程标准化' },
+    { label:'能力建设类', domain: /能力|技能|差距|胜任/.test(all) ? '核心能力构建与差距填补' : '人才培育与能力迁移' }
+  ];
+}
+
+function fallbackSiEssence(senior, expert, hrbp, hiper) {
+  return `本次业务赋能的底层问题是：战略目标与个人行为之间缺乏有效的转化路径，导致高层期待无法落地为一线可执行的动作。从现象看，业务碎片化、执行参差不齐；从规律看，跨岗位共同痛点集中在目标承接与场景化决策两个环节；深层驱动力是组织在「业务-人才」连接机制上的系统性缺失；而本质，则是帮助每一位员工建立「我的能力成长与业务成果强相关」的核心信念，从而激活组织内生的学习与改进动力。这次赋能，本质上是一次将战略压力转化为人才成长能量的系统工程。`;
+}
+
+// ── 供后继任务 1.1.3 调用的接口 ──────────────────────────
+function getSurveyInsightResult(projId) {
+  const id = projId || currentId;
+  if (!id) return null;
+  const p = projects.find(x => x.id === id);
+  return p?.surveyInsight || null;
+}
+
+// ════════════════════════════════════════════
 // 预先研究：洞察数据访问（供后继任务调用）
-// ────────────────────────────────────────────
+// ════════════════════════════════════════════
 function getProjectInsights(projId) {
   const id = projId || currentId;
   if (!id) return null;
