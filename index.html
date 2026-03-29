@@ -217,8 +217,8 @@
       line-height: 1.1;
     }
     .stat-label {
-      font-size: 12.5px; color: var(--slate-400);
-      margin-top: 5px; letter-spacing: 0.3px;
+      font-size: 14px; color: var(--slate-400);
+      margin-top: 6px; letter-spacing: 0.3px;
     }
 
     /* ── SECTION COMMON ── */
@@ -240,8 +240,8 @@
       margin-bottom: 16px;
     }
     .section-desc {
-      font-size: 15.5px; color: var(--slate-400);
-      max-width: 560px; line-height: 1.75;
+      font-size: 17px; color: var(--slate-400);
+      max-width: 560px; line-height: 1.8;
     }
 
     /* ── PROCESS ── */
@@ -263,33 +263,34 @@
     }
     .process-step:hover { background: #1e2a3b; }
     .process-step-num {
-      font-size: 11px; font-weight: 800; letter-spacing: 2px;
+      font-size: 13px; font-weight: 800; letter-spacing: 2px;
       color: var(--red-700); text-transform: uppercase;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .process-step-icon {
-      font-size: 28px; margin-bottom: 14px;
+      font-size: 36px; margin-bottom: 16px;
     }
     .process-step-name {
-      font-size: 18px; font-weight: 800; color: var(--white);
-      margin-bottom: 6px;
+      font-size: 22px; font-weight: 800; color: var(--white);
+      margin-bottom: 8px;
     }
     .process-step-en {
-      font-size: 11px; font-weight: 600; letter-spacing: 1px;
-      color: var(--red-600); text-transform: uppercase;
-      margin-bottom: 14px;
+      font-size: 13px; font-weight: 700; letter-spacing: 1.5px;
+      color: var(--red-500); text-transform: uppercase;
+      margin-bottom: 16px;
     }
     .process-step-desc {
-      font-size: 13px; color: var(--slate-400); line-height: 1.65;
+      font-size: 15px; color: var(--slate-300); line-height: 1.75;
     }
     .process-step-tags {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px;
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px;
     }
     .process-tag {
-      font-size: 11px; padding: 3px 9px;
+      font-size: 12px; padding: 5px 12px;
       background: rgba(220,38,38,0.1);
-      border: 1px solid rgba(220,38,38,0.2);
+      border: 1px solid rgba(220,38,38,0.25);
       border-radius: 4px; color: var(--red-400);
+      font-weight: 500;
     }
     /* connector arrow */
     .process-step:not(:last-child)::after {
@@ -320,26 +321,26 @@
       transform: translateY(-2px);
     }
     .value-card-icon {
-      width: 48px; height: 48px;
+      width: 52px; height: 52px;
       background: rgba(185,28,28,0.15);
       border: 1px solid rgba(220,38,38,0.2);
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
+      font-size: 26px;
       margin-bottom: 20px;
     }
     .value-card-title {
-      font-size: 17px; font-weight: 800; color: var(--white);
-      margin-bottom: 10px;
+      font-size: 19px; font-weight: 800; color: var(--white);
+      margin-bottom: 12px;
     }
     .value-card-desc {
-      font-size: 13.5px; color: var(--slate-400); line-height: 1.7;
+      font-size: 15px; color: var(--slate-300); line-height: 1.75;
     }
     .value-card-metric {
-      margin-top: 18px;
-      font-size: 13px;
+      margin-top: 20px;
+      font-size: 15px;
       color: var(--red-400);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* ── WHO ── */
@@ -357,23 +358,26 @@
       padding: 28px 28px 24px;
     }
     .who-role {
-      font-size: 16px; font-weight: 800; color: var(--white);
-      margin-bottom: 8px;
+      font-size: 18px; font-weight: 800; color: var(--white);
+      margin-bottom: 10px;
+      line-height: 1.4;
     }
     .who-desc {
-      font-size: 13px; color: var(--slate-400); line-height: 1.65;
-      margin-bottom: 16px;
+      font-size: 15px; color: var(--slate-300); line-height: 1.75;
+      margin-bottom: 18px;
     }
     .who-gains { list-style: none; }
     .who-gains li {
-      font-size: 12.5px; color: var(--slate-300);
-      padding: 5px 0;
+      font-size: 14px; color: var(--slate-200);
+      padding: 7px 0;
       display: flex; align-items: flex-start; gap: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      line-height: 1.5;
     }
     .who-gains li:last-child { border-bottom: none; }
     .who-gains li::before {
-      content: '▸'; color: var(--red-600); flex-shrink: 0; margin-top: 1px;
+      content: '▸'; color: var(--red-500); flex-shrink: 0; margin-top: 2px;
+      font-size: 13px;
     }
 
     /* ── CTA SECTION ── */
@@ -651,7 +655,7 @@
 
     <div class="who-grid">
       <div class="who-card">
-        <div class="who-role">🏢 企业培训负责人 / TD 负责人</div>
+        <div class="who-role">🏢 企业培训 / TD 负责人</div>
         <div class="who-desc">
           需要快速响应业务部门的赋能需求，在有限预算内交出高质量的
           定制化学习解决方案。
