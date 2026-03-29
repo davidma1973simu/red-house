@@ -289,13 +289,13 @@
     .pib-cell:first-child { padding-left:8px; }
     .pib-cell:last-child { border-right:none; }
     .pib-label {
-      font-size:17px; font-weight:900; letter-spacing:0.5px;
+      font-size:24px; font-weight:900; letter-spacing:0.5px;
       color:var(--red-500);
       margin-bottom:14px;
     }
     .pib-goal-text {
-      font-size:15px; font-weight:600; color:var(--white);
-      line-height:1.7;
+      font-size:17px; font-weight:600; color:var(--white);
+      line-height:1.8;
     }
     .pib-goal-text em {
       font-style:normal;
@@ -309,11 +309,11 @@
       display:flex; align-items:baseline; gap:10px;
     }
     .pib-module-name {
-      font-size:13.5px; font-weight:800; color:var(--white);
-      white-space:nowrap; min-width:64px;
+      font-size:18px; font-weight:800; color:var(--white);
+      white-space:nowrap; min-width:72px;
     }
     .pib-module-tasks {
-      font-size:12.5px; color:var(--slate-400); line-height:1.6;
+      font-size:14px; color:var(--slate-400); line-height:1.7;
     }
     .pib-module-tasks b { color:var(--slate-300); }
 
@@ -391,7 +391,7 @@
     .module-3 .module-index { background:rgba(16,185,129,0.15); color:#34d399; }
     .module-title-group {}
     .module-title {
-      font-size:20px; font-weight:800; color:var(--white);
+      font-size:26px; font-weight:800; color:var(--white);
       margin-bottom:2px;
     }
     .module-desc { font-size:13px; color:var(--slate-500); line-height:1.5; }
@@ -609,7 +609,7 @@
       margin-bottom:28px;
     }
     .ws-section-title {
-      font-size:16px; font-weight:800; color:var(--white);
+      font-size:20px; font-weight:800; color:var(--white);
       margin-bottom:6px; display:flex; align-items:center; gap:8px;
     }
     .ws-section-title::after {
@@ -2232,22 +2232,22 @@ function buildPreResearchPrompt(industry, goal, expect_, concern) {
 【输出格式】（严格 JSON，不要额外说明）
 {
   "dims": [
-    "内部研究：……（2-3句，聚焦战略与经营现状，结合用户输入中的业务战略目标与高层期待）",
+    "内部研究：……（2-3句，聚焦战略与经营现状，结合业务战略目标与高层期待）",
     "外部研究：……（2-3句，聚焦行业趋势与竞争环境，结合行业特点）",
-    "人才研究：……（2-3句，聚焦目标群体技能知识与绩效现状，结合核心担忧）"
+    "人才研究：……（2-3句，必须明确指出目标群体在哪2-3项具体能力上存在差距，结合核心担忧，差距描述要具体，不要泛泛而谈）"
   ],
   "whys": [
-    "WHY1 受众锁定：……（1-2句，说明为什么是这些人，必须关联业务战略目标「${goal}」）",
-    "WHY2 主题聚焦：……（1-2句，说明为什么是这个赋能主题，必须对应内部研究中识别的能力差距）",
-    "WHY3 时机判断：……（1-2句，说明为什么现在是合适时机，必须关联核心担忧「${concern || '组织能力与业务脱节'}」）"
+    "WHY1：……（1-2句，说明为什么是这些人，必须关联「${goal}」目标的达成路径，点明这群人处于价值链的哪个关键节点）",
+    "WHY2：……（1-2句，必须直接引用 dims 人才研究中识别的2-3个具体能力差距，说明这些差距为什么是赋能主题的核心，语言要精准，禁止用'能力不足'等宽泛表述）",
+    "WHY3：……（1-2句，说明为什么现在是最佳时机，必须关联核心担忧「${concern || '组织能力与业务脱节'}」，指出当前窗口期的具体表现）"
   ],
   "priorities": [
-    关键要求：每条赋能目标必须直接对应上方 dims 和 whys 中识别的具体差距，以「${goal}」为北极星，按业务影响力从高到低排序，目标描述20字内，KPI 必须可量化。
-    { "objective": "第1优先：……（直接对应 WHY2 识别的核心能力差距）", "kpi": ["关联业务目标的可测指标1", "指标2"] },
-    { "objective": "第2优先：……（对应人才研究中最显著的绩效差距）", "kpi": ["可测指标1", "指标2"] },
-    { "objective": "第3优先：……（支撑战略目标的次级能力）", "kpi": ["可测指标1"] },
-    { "objective": "第4优先：……（协同赋能的基础能力）", "kpi": ["可测指标1"] },
-    { "objective": "第5优先：……（长效机制与持续改进）", "kpi": ["可测指标1"] }
+    严格规则：每条优先排序目标必须从上方 dims 和 whys 中直接提炼，以「${goal}」为北极星，目标描述必须具体（含动词+场景+预期结果），15-25字，KPI 必须可量化，按业务影响力由高到低排序，禁止出现「提升能力」「加强学习」等空洞表述。
+    { "objective": "第1优先：直接对应 WHY2 核心差距的赋能目标，必须含具体行为动词", "kpi": ["关联 dims/whys 的可量化业务指标", "行为层面可观察指标"] },
+    { "objective": "第2优先：人才研究中绩效差距最显著的能力培育目标", "kpi": ["可量化指标", "可观察指标"] },
+    { "objective": "第3优先：支撑「${goal}」达成的次级关键能力", "kpi": ["可量化指标"] },
+    { "objective": "第4优先：协同配套的跨职能或流程能力", "kpi": ["可量化指标"] },
+    { "objective": "第5优先：长效机制建立与知识体系沉淀", "kpi": ["可量化指标"] }
   ]
 }`;
 }
@@ -2440,41 +2440,108 @@ function fallbackWhys(industry, goal, expect_, concern) {
   ];
 }
 function fallbackPriorities(industry, goal, dims, whys) {
-  // 从 dims 和 whys 中提取核心词，做强相关推导
-  const ind = industry || '该行业';
-  const g   = goal     || '战略目标';
+  /* ──────────────────────────────────────────────────────────────
+   * 策略：先从 dims（三维分析）和 whys（3WHYs）文本中提取
+   * 具体的差距关键词，再以业务战略目标为锚，
+   * 生成 5 条高度对应的赋能目标+KPI。
+   * ────────────────────────────────────────────────────────────── */
+  const g   = (goal || '战略目标').trim();
+  const gShort = g.slice(0, 22);
 
-  // 提取 dims 关键信息
-  const dimTexts = (dims || []).map(d => d.replace(/<[^>]+>/g,''));
-  const allContext = [...dimTexts, ...(whys||[])].join(' ');
+  // 清洗文本
+  const clean = s => (s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const dimInternal = clean(dims?.[0] || '');
+  const dimExternal = clean(dims?.[1] || '');
+  const dimTalent   = clean(dims?.[2] || '');
+  const why1 = clean(whys?.[0] || '');
+  const why2 = clean(whys?.[1] || '');
+  const why3 = clean(whys?.[2] || '');
+  const allText = [dimInternal, dimExternal, dimTalent, why1, why2, why3].join(' ');
 
-  // 基于业务目标关键词动态生成
-  const goalLower = g.toLowerCase();
-  const isGrowth  = /增长|提升|扩大|增加|growth/.test(goalLower);
-  const isCost    = /降本|成本|效率|优化|减少/.test(goalLower);
-  const isCustomer = /客户|服务|满意|体验|nps/.test(goalLower);
-  const isTech    = /数字|智能|数据|系统|技术/.test(goalLower);
-  const isLead    = /管理|领导|团队|人才|梯队/.test(goalLower);
+  /* ── 语义特征检测 ── */
+  const has = pattern => pattern.test(allText);
+  // 业务方向
+  const isGrowth   = has(/增长|提升|扩大|签约|新客|营收|业绩|销售/);
+  const isCustomer = has(/客户|服务|满意|体验|NPS|增值|关系/);
+  const isCost     = has(/降本|成本|效率|优化|减少|浪费|资源/);
+  const isTech     = has(/数字|智能|数据|系统|技术|平台|AI/);
+  const isLead     = has(/管理|领导|梯队|团队|培育|人才|教练/);
+  const isProc     = has(/流程|标准|规范|合规|SOP|操作|制度/);
+  const isInno     = has(/创新|转型|变革|探索|新模式|突破/);
+  // 能力差距关键词（来自 dimTalent + why2）
+  const gapText = [dimTalent, why2].join(' ');
+  const hasGap = pattern => pattern.test(gapText);
+  const gapLead    = hasGap(/经营意识|管理|决策|领导|跨层|目标承接/);
+  const gapScene   = hasGap(/场景|实战|应用|落地|行为转化|执行/);
+  const gapComm    = hasGap(/沟通|表达|协作|跨部门|对齐|说服/);
+  const gapData    = hasGap(/数据|分析|复盘|量化|可视化|指标/);
+  const gapCust    = hasGap(/客户|服务|体验|增值|续签|留存/);
 
+  /* ── 从 WHY2 中提取核心能力差距短语 ── */
+  // 尝试提取 why2 中「能力差距」的核心描述（取第一个关键动词短语）
+  const coreCapGap = (() => {
+    const m = why2.match(/([^，。,]{4,16}(?:能力|意识|技能|水平|差距|不足|缺失)[^，。,]{0,10})/);
+    return m ? m[1].trim() : `直接对标「${gShort}」的关键能力`;
+  })();
+
+  /* ── 从 dimTalent 提取绩效差距短语 ── */
+  const perfGap = (() => {
+    const m = dimTalent.match(/([^，。,]{4,18}(?:差距|不足|缺乏|薄弱|不均|偏低|不足)[^，。,]{0,8})/);
+    return m ? m[1].trim() : `关键绩效差距弥合`;
+  })();
+
+  /* ── 动态生成目标池（按相关性打分排序） ── */
   const pool = [
-    { cond: isGrowth||true,   obj: `以「${g.slice(0,20)}」为锚的目标拆解能力`,
-      kpi: ['战略目标达成率', '季度 OKR 对齐度'] },
-    { cond: isCustomer||isGrowth, obj: `客户价值挖掘与增值场景识别`,
-      kpi: ['客户满意度 NPS', '增值服务渗透率'] },
-    { cond: isLead||true,     obj: `跨层级业务目标的承接与转化`,
-      kpi: ['目标逐层分解准确率', '一线行动转化率'] },
-    { cond: isCost||isGrowth, obj: `场景化问题诊断与资源优先配置`,
-      kpi: ['关键问题解决周期', '资源浪费率降低'] },
-    { cond: isTech||true,     obj: `数据驱动复盘与经验体系沉淀`,
-      kpi: ['最佳实践案例沉淀量', '能力可迁移率'] },
-    { cond: isCustomer,       obj: `高价值客户关系经营与忠诚度提升`,
-      kpi: ['高价值客户留存率', '复购/续签率'] },
-    { cond: isLead,           obj: `管理者教练能力与人才加速培育`,
-      kpi: ['核心人才留存率', '高潜提拔周期'] },
+    // P1：永远第一——核心能力差距，直接对应 WHY2 + 业务目标
+    {
+      score: 100,
+      obj: `${coreCapGap}，直接驱动「${gShort}」达成`,
+      kpi: [
+        isGrowth ? '业务目标达成率' : isCustomer ? '客户满意度提升幅度' : '核心指标达成率',
+        `关键行为转化率`
+      ]
+    },
+    // P2：从 dimTalent 提取的绩效差距
+    {
+      score: 90,
+      obj: `${perfGap}——缩小高绩效与平均绩效的能力差距`,
+      kpi: ['头尾部绩效差距缩小率', '高绩效行为复制率']
+    },
+    // P3：依据业务目标类型动态选择
+    {
+      score: isGrowth ? 85 : isCustomer ? 85 : 70,
+      obj: isGrowth   ? `客户价值挖掘与${isCustomer?'增值服务':'商机识别'}能力` :
+           isCustomer ? `客户关系深耕与高价值场景经营能力` :
+           isCost     ? `流程优化与资源高效配置决策能力` :
+           `业务场景化问题诊断与应对能力`,
+      kpi: isGrowth   ? ['增值场景转化率', '客户签约贡献额'] :
+           isCustomer ? ['NPS净推荐值', '客户留存率'] :
+           isCost     ? ['资源利用率提升', '关键流程缩短率'] :
+           ['场景问题解决率', '方案质量评分']
+    },
+    // P4：从 why1（受众特征）和 why3（时机）提取的战略承接
+    {
+      score: 80,
+      obj: `跨层级目标承接与一线行动转化——${why3.slice(0,18)}`,
+      kpi: ['目标层层对齐率', '一线行动计划完成率']
+    },
+    // P5：长效机制
+    {
+      score: isTech ? 75 : isLead ? 78 : 65,
+      obj: isTech ? `数据驱动复盘与智能化工具赋能` :
+           isLead  ? `管理者教练文化与人才加速培育机制` :
+           isProc  ? `标准化操作与合规风险防控能力` :
+           isInno  ? `创新思维与业务转型应变能力` :
+           `经验沉淀与可复制最佳实践体系建设`,
+      kpi: isTech ? ['数字工具使用率', '数据驱动决策比例'] :
+           isLead  ? ['核心人才留存率', '高潜人才提拔周期'] :
+           ['最佳实践案例数', '能力可迁移率']
+    }
   ];
 
+  // 按 score 降序取前5
   return pool
-    .sort((a, b) => (b.cond ? 1 : 0) - (a.cond ? 1 : 0))
+    .sort((a, b) => b.score - a.score)
     .slice(0, 5)
     .map(item => ({ objective: item.obj, kpi: item.kpi }));
 }
