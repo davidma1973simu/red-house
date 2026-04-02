@@ -1330,7 +1330,7 @@
                   <div class="task-desc">结合预研与调研洞察，构建商业影响图（BIM）——从业务赋能目标逐层拆解到岗位个人改善目标与量化 KPI。</div>
                   <div class="task-io">
                     <div class="task-io-item"><span class="task-io-label in">输入</span>3·WHY 结论 · 赋能优先级 · 受众画像</div>
-                    <div class="task-io-item"><span class="task-io-label out">产出</span>KRA→KPI→个人目标 全景视图 · TBPS 公式</div>
+                    <div class="task-io-item"><span class="task-io-label out">产出</span>KRA→KPI→个人目标 全景视图</div>
                   </div>
                 </div>
                 <div class="task-card-footer">
@@ -1358,43 +1358,71 @@
               </div>
             </div>
             <div class="task-cards">
-              <div class="task-card locked" id="tc-0-1-0">
+              <!-- 任务 1·2·1 学员画像 -->
+              <div class="task-card" id="tc-0-1-0" onclick="openTask(0,1,0)">
                 <div class="task-card-header">
                   <span class="task-num">任务 1·2·1</span>
-                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                  <span class="task-badge task-badge-active">进行中</span>
                 </div>
                 <div class="task-card-body">
-                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
-                  <div class="task-desc" style="color:var(--slate-700)">完成绩效洞察模块后解锁</div>
+                  <div class="task-name">学员画像</div>
+                  <div class="task-desc">构建目标学员画像：分析岗位特征、能力差距（CASK矩阵）、典型行为模式与学习准备度。</div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">输入</div>
+                    <span class="task-io-item input">岗位/层级信息</span>
+                    <span class="task-io-item input">BIM 个人赋能目标</span>
+                    <div class="task-io-label" style="margin-top:4px">产出</div>
+                    <span class="task-io-item output">能力差距矩阵</span>
+                    <span class="task-io-item output">行为模式</span>
+                    <span class="task-io-item output">学习准备度</span>
+                  </div>
                 </div>
                 <div class="task-card-footer">
-                  <span class="task-locked-msg">🔒 完成模块1解锁</span>
+                  <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
                 </div>
               </div>
-              <div class="task-card locked" id="tc-0-1-1">
+              <!-- 任务 1·2·2 场景萃取 -->
+              <div class="task-card" id="tc-0-1-1" onclick="openTask(0,1,1)">
                 <div class="task-card-header">
                   <span class="task-num">任务 1·2·2</span>
-                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                  <span class="task-badge task-badge-active">进行中</span>
                 </div>
                 <div class="task-card-body">
-                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
-                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                  <div class="task-name">场景萃取</div>
+                  <div class="task-desc">基于学员画像和能力差距，萃取高频典型工作场景，识别关键决策节点与成功行为。</div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">输入</div>
+                    <span class="task-io-item input">学员画像</span>
+                    <span class="task-io-item input">核心业务流程</span>
+                    <div class="task-io-label" style="margin-top:4px">产出</div>
+                    <span class="task-io-item output">高频场景卡片</span>
+                    <span class="task-io-item output">关键行为清单</span>
+                  </div>
                 </div>
                 <div class="task-card-footer">
-                  <span class="task-locked-msg">🔒 待解锁</span>
+                  <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
                 </div>
               </div>
-              <div class="task-card locked" id="tc-0-1-2">
+              <!-- 任务 1·2·3 行为标准 -->
+              <div class="task-card" id="tc-0-1-2" onclick="openTask(0,1,2)">
                 <div class="task-card-header">
                   <span class="task-num">任务 1·2·3</span>
-                  <span class="task-badge task-badge-locked">🔒 待解锁</span>
+                  <span class="task-badge task-badge-active">进行中</span>
                 </div>
                 <div class="task-card-body">
-                  <div class="task-name" style="color:var(--slate-600)">即将开放</div>
-                  <div class="task-desc" style="color:var(--slate-700)">完成上一任务后解锁</div>
+                  <div class="task-name">行为标准</div>
+                  <div class="task-desc">基于场景萃取产出 CASK 高绩效行为标准清单，明确可观察的行为指标。</div>
+                  <div class="task-io-row">
+                    <div class="task-io-label">输入</div>
+                    <span class="task-io-item input">场景萃取结果</span>
+                    <span class="task-io-item input">企业价值观</span>
+                    <div class="task-io-label" style="margin-top:4px">产出</div>
+                    <span class="task-io-item output">CASK 行为标准</span>
+                    <span class="task-io-item output">可观察指标</span>
+                  </div>
                 </div>
                 <div class="task-card-footer">
-                  <span class="task-locked-msg">🔒 待解锁</span>
+                  <button class="task-cta">开始工作 <span class="task-cta-arrow">→</span></button>
                 </div>
               </div>
             </div>

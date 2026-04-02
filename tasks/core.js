@@ -24,11 +24,25 @@ const TASK_META = {
   '0-0-2': {
     name: '目标拆解',
     phase: '洞察定义', module: '绩效洞察', num: '1·1·3',
-    desc: '构建商业影响图（BIM）：将业务赋能目标拆解为关键结果领域（KRA）→ 量化 KPI（含权重）→ 岗位个人改善目标，生成 TBPS 团队综合绩效公式。'
+    desc: '构建商业影响图（BIM）：将业务赋能目标拆解为关键结果领域（KRA）→ 量化 KPI → 岗位个人改善目标。'
   },
 
-  // 模块 2：行为洞察（待实现）
-  // '0-1-0': { name: '…', phase:'洞察定义', module:'行为洞察', num:'1·2·1', desc:'…' },
+  // 模块 2：发展目标
+  '0-1-0': {
+    name: '学员画像',
+    phase: '洞察定义', module: '发展目标', num: '1·2·1',
+    desc: '构建目标学员画像：分析岗位特征、能力差距（CASK矩阵）、典型行为模式与学习准备度。'
+  },
+  '0-1-1': {
+    name: '场景萃取',
+    phase: '洞察定义', module: '发展目标', num: '1·2·2',
+    desc: '基于学员画像和能力差距，萃取高频典型工作场景，识别关键决策节点与成功行为。'
+  },
+  '0-1-2': {
+    name: '行为标准',
+    phase: '洞察定义', module: '发展目标', num: '1·2·3',
+    desc: '基于场景萃取产出 CASK 高绩效行为标准清单，明确可观察的行为指标，为训战设计提供评估基准。'
+  },
 
   // 模块 3：内容设计洞察（待实现）
   // '0-2-0': { ... },
@@ -66,6 +80,9 @@ function openTask(phase, mod, task) {
   if (key === '0-0-0') restorePreResearchResult();
   if (key === '0-0-1') restoreSurveyInsightResult();
   if (key === '0-0-2') restoreBIMResult();
+  if (key === '0-1-0') restoreLPResult();
+  if (key === '0-1-1') restoreSEResult();
+  if (key === '0-1-2') restoreBSResult();
 
   document.getElementById('workspace-overlay').classList.add('open');
 }
@@ -79,6 +96,9 @@ function renderTaskContent(key) {
   if (key === '0-0-0') return renderPreResearch();
   if (key === '0-0-1') return renderSurveyInsight();
   if (key === '0-0-2') return renderBIM();
+  if (key === '0-1-0') return renderLearnerProfile();
+  if (key === '0-1-1') return renderScenarioExtract();
+  if (key === '0-1-2') return renderBehaviorStandard();
 
   // 占位：未实现任务
   return `<div class="ws-placeholder">

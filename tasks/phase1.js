@@ -2336,6 +2336,557 @@ ${kraTable}
   a.click(); URL.revokeObjectURL(url);
 }
 
+// ════════════════════════════════════════════
+// 任务 1·2·1  学员画像 (Learner Profile)
+// 目标学员群体特征分析：岗位/层级/行为现状/能力短板
+// ════════════════════════════════════════════
+
+const LP_DATA_KEY = 'rh_lp_data_v1';
+const LP_RESULT_KEY = 'rh_lp_result_v1';
+function loadLPData() { try { return JSON.parse(localStorage.getItem(LP_DATA_KEY)||'{}'); } catch(e) { return {}; } }
+function saveLPData(d) { localStorage.setItem(LP_DATA_KEY, JSON.stringify(d)); }
+function loadLPResult() { try { return JSON.parse(localStorage.getItem(LP_RESULT_KEY)||'null'); } catch(e) { return null; } }
+function saveLPResult(r) { r.savedAt = new Date().toISOString(); localStorage.setItem(LP_RESULT_KEY, JSON.stringify(r)); const p = projects.find(x => x.id === currentId); if (p) { p.learnerProfile = r; saveProjects(); } }
+
+function getLPContext() {
+  const pr = (() => { try { return JSON.parse(localStorage.getItem('rh_pr_result_v1')||'{}'); } catch(e) { return {}; } })();
+  const bim = loadBIMResult();
+  const p = projects.find(x => x.id === currentId) || {};
+  return { goal: p.goal||'', audience: p.audience||'', industry: p.industry||'', priorities: pr.priorities||[],
+    bimGoal: bim ? bim.businessGoal : '', kras: bim ? bim.kras : [],
+    personalGoals: bim ? (bim.kras||[]).map(k => k.personalGoal).filter(Boolean) : [] };
+}
+
+function buildLPContextBadges(ctx) {
+  const tags = [];
+  if (ctx.industry) tags.push(ctx.industry);
+  if (ctx.bimGoal) tags.push(ctx.bimGoal);
+  (ctx.personalGoals||[]).slice(0,3).forEach(g => tags.push(g));
+  if (!tags.length) tags.push('暂无上游数据，可直接填写');
+  return tags.map(t => `<span class="ctx-tag">${esc(t)}</span>`).join('');
+}
+
+function renderLearnerProfile() {
+  const ctx = getLPContext();
+  const saved = loadLPData();
+  return `
+<div class="bim-workspace">
+  <div class="ws-context-bar">${buildLPContextBadges(ctx)}</div>
+  <div class="ws-section">
+    <div class="ws-section-title">① 基本信息</div>
+    <div class="ws-section-desc">填写目标学员群体的基本信息，帮助 AI 精准分析学员特征。</div>
+    <div class="pr-input-grid">
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">1</span>岗位/角色</div>
+        <input id="lp-role" type="text" placeholder="例：区域销售经理、项目经理" value="${esc(saved.role||'')}"/></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">2</span>层级范围</div>
+        <input id="lp-level" type="text" placeholder="例：M1-M2 中层管理" value="${esc(saved.level||'')}"/></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">3</span>团队规模</div>
+        <input id="lp-size" type="text" placeholder="例：约 120 人" value="${esc(saved.size||'')}"/></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">4</span>典型工作年限</div>
+        <input id="lp-tenure" type="text" placeholder="例：3-8 年" value="${esc(saved.tenure||'')}"/></div>
+    </div>
+    <div class="pr-input-grid" style="margin-top:12px">
+      <div class="pr-input-card" style="grid-column:span 2"><div class="pr-input-label"><span class="pr-input-num">5</span>当前业务挑战（可选）</div>
+        <textarea id="lp-challenge" rows="3" placeholder="描述学员当前面临的核心业务挑战…"
+          style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);resize:vertical;outline:none">${esc(saved.challenge||'')}</textarea></div>
+      <div class="pr-input-card" style="grid-column:span 2"><div class="pr-input-label"><span class="pr-input-num">6</span>已知典型行为表现（可选）</div>
+        <textarea id="lp-behavior" rows="3" placeholder="例：面对客户异议时回避价格讨论…"
+          style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);resize:vertical;outline:none">${esc(saved.behavior||'')}</textarea></div>
+    </div>
+  </div>
+  <div class="ws-section">
+    <div class="ws-section-title">② AI 分析</div>
+    <button class="si-run-btn" id="lp-run-btn" onclick="runLPAI()"><span class="btn-label">🔍 生成学员画像</span></button>
+    <div class="si-loading" id="lp-loading" style="display:none">
+      <div class="si-step" id="lp-step-0">📋 采集学员基本信息…</div>
+      <div class="si-step" id="lp-step-1">🧠 分析岗位能力模型…</div>
+      <div class="si-step" id="lp-step-2">📊 识别能力差距与短板…</div>
+      <div class="si-step" id="lp-step-3">✅ 生成学员画像报告…</div>
+    </div>
+  </div>
+  <div class="ws-section" id="lp-output-section">
+    <div class="ws-section-title">③ 学员画像报告</div>
+    <div id="lp-result-area"></div>
+  </div>
+</div>`;
+}
+
+async function runLPAI() {
+  const runBtn = document.getElementById('lp-run-btn');
+  const loading = document.getElementById('lp-loading');
+  const resultArea = document.getElementById('lp-result-area');
+  const outputSec = document.getElementById('lp-output-section');
+  const data = { role: document.getElementById('lp-role').value.trim(), level: document.getElementById('lp-level').value.trim(),
+    size: document.getElementById('lp-size').value.trim(), tenure: document.getElementById('lp-tenure').value.trim(),
+    challenge: document.getElementById('lp-challenge').value.trim(), behavior: document.getElementById('lp-behavior').value.trim() };
+  saveLPData(data);
+  runBtn.disabled = true; runBtn.querySelector('.btn-label').textContent = '⏳ 分析中…';
+  loading.style.display = 'block'; resultArea.innerHTML = '';
+  const ctx = getLPContext();
+  try {
+    const steps = [0,1,2,3].map(i => document.getElementById(`lp-step-${i}`));
+    steps[0].classList.add('active'); await sleep(600);
+    let result;
+    if (typeof callAI === 'function') {
+      steps[0].classList.replace('active','done'); steps[1].classList.add('active');
+      const raw = await callAI(buildLPPrompt(data, ctx));
+      steps[1].classList.replace('active','done'); steps[2].classList.add('active');
+      await sleep(400);
+      try { result = JSON.parse(raw); } catch(e) { result = null; }
+    }
+    if (!result) {
+      steps[2].classList.replace('active','done'); steps[3].classList.add('active');
+      result = fallbackLP(data, ctx); await sleep(300);
+    }
+    steps[3].classList.replace('active','done');
+    saveLPResult(result); renderLPResult(result); outputSec.classList.add('lit'); saveWorkspace();
+  } catch(e) {
+    showToast('分析失败：'+e.message);
+    const result = fallbackLP(data, ctx); saveLPResult(result); renderLPResult(result);
+  }
+  loading.style.display = 'none'; runBtn.disabled = false; runBtn.querySelector('.btn-label').textContent = '✓ 重新分析';
+}
+
+function buildLPPrompt(data, ctx) {
+  return `你是资深组织发展顾问和人才分析师。请根据以下信息生成「目标学员画像」报告。
+
+## 输入
+- 岗位/角色：${data.role||'未提供'}
+- 层级范围：${data.level||'未提供'}
+- 团队规模：${data.size||'未提供'}
+- 工作年限：${data.tenure||'未提供'}
+- 行业：${ctx.industry||'未提供'}
+- 业务目标：${ctx.bimGoal||ctx.goal||'未提供'}
+- BIM个人目标：${(ctx.personalGoals||[]).join('；')||'未提供'}
+- 业务挑战：${data.challenge||'未提供'}
+- 典型行为：${data.behavior||'未提供'}
+
+## 输出（严格JSON）
+{"summary":"一句话画像(30字内)","demographics":{"roleRange":"岗位范围","levelRange":"层级","avgTenure":"年限","teamScale":"规模"},"competencyGap":[{"competency":"能力名(8字内)","category":"CASK分类(C/A/S/K)","currentLevel":"当前水平(20字内)","targetLevel":"期望水平(20字内)","gapDesc":"差距描述(25字内)"}],"behaviorPatterns":[{"pattern":"行为名(10字内)","description":"描述(40字内)","impact":"影响(30字内)","frequency":"高/中/低频"}],"learningReadiness":{"motivation":"动机(20字内)","preference":"偏好(20字内)","barrier":"障碍(20字内)"}}
+
+要求：competencyGap 5-7项，behaviorPatterns 4-6项，基于输入推理不编造。`;
+}
+
+function fallbackLP(data, ctx) {
+  const role = data.role||'目标岗位';
+  const level = data.level||'中层管理';
+  const kras = (ctx.kras||[]).map(k => k.personalGoal||k.name);
+  return {
+    summary: `${ctx.industry||''}${role}（${level}），需在${kras[0]||'业务赋能'}方向重点突破`,
+    demographics: { roleRange: role, levelRange: level, avgTenure: data.tenure||'3-5年', teamScale: data.size||'待确认' },
+    competencyGap: [
+      { competency:'业务洞察', category:'C', currentLevel:'凭经验直觉', targetLevel:'数据驱动决策', gapDesc:'缺乏系统分析框架' },
+      { competency:'目标拆解', category:'S', currentLevel:'目标模糊', targetLevel:'SMART目标管理', gapDesc:'无法有效拆解战略' },
+      { competency:'团队辅导', category:'S', currentLevel:'指令式管理', targetLevel:'教练式赋能', gapDesc:'辅导技巧薄弱' },
+      { competency:'沟通表达', category:'S', currentLevel:'单向传递', targetLevel:'双向有效沟通', gapDesc:'倾听与反馈不足' },
+      { competency:'变革适应', category:'A', currentLevel:'被动应对', targetLevel:'主动拥抱变革', gapDesc:'变革韧性不足' },
+      { competency:'客户导向', category:'A', currentLevel:'内部流程导向', targetLevel:'客户价值导向', gapDesc:'客户意识薄弱' }
+    ],
+    behaviorPatterns: [
+      { pattern:'回避冲突', description:'面对团队矛盾倾向于回避而非正面解决', impact:'问题积累、团队氛围下降', frequency:'高频' },
+      { pattern:'短视决策', description:'决策偏重短期指标，忽视长期战略影响', impact:'战略执行偏移、资源浪费', frequency:'中频' },
+      { pattern:'经验依赖', description:'过度依赖过往经验，缺乏创新尝试', impact:'错失改进机会、竞争力下降', frequency:'高频' },
+      { pattern:'信息孤岛', description:'跨部门协作不足，信息共享意识薄弱', impact:'协同效率低、重复劳动', frequency:'中频' }
+    ],
+    learningReadiness: { motivation:'业务压力驱动，提升意愿较强', preference:'案例教学+实战模拟+同行交流', barrier:'工学矛盾突出，缺乏集中学习时间' }
+  };
+}
+
+function renderLPResult(result) {
+  const area = document.getElementById('lp-result-area');
+  if (!area) return;
+  window._lpCurrentResult = result;
+  const gapRows = (result.competencyGap||[]).map(g => {
+    const cc = {C:'#60a5fa',A:'#f472b6',S:'#34d399',K:'#fbbf24'}[g.category]||'#94a3b8';
+    const cl = {C:'认知',A:'态度',S:'技能',K:'知识'}[g.category]||g.category;
+    return `<tr><td style="text-align:center;font-weight:700;color:${cc}">${cl}</td><td><strong>${esc(g.competency)}</strong></td><td style="color:var(--slate-400)">${esc(g.currentLevel)}</td><td style="color:var(--emerald-400)">${esc(g.targetLevel)}</td><td style="color:var(--amber-400)">${esc(g.gapDesc)}</td></tr>`;
+  }).join('');
+  const behavCards = (result.behaviorPatterns||[]).map(b => {
+    const fc = b.frequency==='高频'?'var(--red-400)':b.frequency==='中频'?'var(--amber-400)':'var(--slate-400)';
+    return `<div class="si-insight-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><strong style="font-size:13px">${esc(b.pattern)}</strong><span style="font-size:10px;font-weight:700;color:${fc};background:rgba(255,255,255,0.05);padding:2px 8px;border-radius:4px">${esc(b.frequency)}</span></div><div style="font-size:12.5px;color:var(--slate-300);margin-bottom:4px">${esc(b.description)}</div><div style="font-size:11.5px;color:var(--slate-500)">💡 影响：${esc(b.impact)}</div></div>`;
+  }).join('');
+  const lr = result.learningReadiness||{};
+  const dm = result.demographics||{};
+  area.innerHTML = `
+<div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:10px;padding:14px 18px;margin-bottom:16px">
+  <div style="font-size:10px;font-weight:700;color:var(--red-400);letter-spacing:1px;margin-bottom:6px">学员画像概要</div>
+  <div style="font-size:15px;font-weight:700;color:var(--white)">${esc(result.summary)}</div>
+  <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--slate-400)">
+    <span>👥 ${esc(dm.roleRange||'')}</span><span>📊 ${esc(dm.levelRange||'')}</span><span>📅 ${esc(dm.avgTenure||'')}</span><span>🏢 ${esc(dm.teamScale||'')}</span></div></div>
+<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px">能力差距矩阵（CASK）</div>
+  <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1)"><th style="padding:8px 10px;text-align:left;color:var(--slate-500);font-weight:600">分类</th><th style="padding:8px 10px;text-align:left;color:var(--slate-500);font-weight:600">能力项</th><th style="padding:8px 10px;text-align:left;color:var(--slate-500);font-weight:600">当前水平</th><th style="padding:8px 10px;text-align:left;color:var(--slate-500);font-weight:600">期望水平</th><th style="padding:8px 10px;text-align:left;color:var(--slate-500);font-weight:600">核心差距</th></tr></thead><tbody>${gapRows}</tbody></table></div></div>
+<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px">典型行为模式</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">${behavCards}</div></div>
+<div style="background:var(--slate-800);border-radius:10px;padding:14px 18px;margin-bottom:16px"><div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px">学习准备度评估</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:12.5px">
+    <div><span style="color:var(--slate-500)">🎯 动机：</span><span style="color:var(--slate-200)">${esc(lr.motivation||'')}</span></div>
+    <div><span style="color:var(--slate-500)">📚 偏好：</span><span style="color:var(--slate-200)">${esc(lr.preference||'')}</span></div>
+    <div><span style="color:var(--slate-500)">🚧 障碍：</span><span style="color:var(--slate-200)">${esc(lr.barrier||'')}</span></div></div></div>
+<div style="display:flex;gap:10px;margin-top:8px"><button class="btn-sm btn-red" onclick="downloadLPReport()">📥 下载报告</button></div>`;
+}
+
+function restoreLPResult() {
+  const result = loadLPResult(); if (!result||!result.summary) return;
+  renderLPResult(result); document.getElementById('lp-output-section').classList.add('lit');
+  const b = document.getElementById('lp-run-btn'); if (b) b.querySelector('.btn-label').textContent = '✓ 重新分析';
+}
+
+function downloadLPReport() {
+  const result = window._lpCurrentResult||loadLPResult();
+  if (!result) { showToast('请先生成学员画像'); return; }
+  const now = new Date().toLocaleDateString('zh-CN');
+  const gt = (result.competencyGap||[]).map((g,i)=>`| ${i+1} | ${g.category} | ${g.competency} | ${g.currentLevel} | ${g.targetLevel} | ${g.gapDesc} |`).join('\n');
+  const bl = (result.behaviorPatterns||[]).map(b=>`- **${b.pattern}**（${b.frequency}）：${b.description} → 影响：${b.impact}`).join('\n');
+  const lr=result.learningReadiness||{}; const dm=result.demographics||{};
+  const md = `# 目标学员画像报告\n> 生成日期：${now}  |  Red House 训战设计平台\n\n---\n\n## 画像概要\n**${result.summary}**\n\n| 维度 | 信息 |\n|------|------|\n| 岗位范围 | ${dm.roleRange||'-'} |\n| 层级范围 | ${dm.levelRange||'-'} |\n| 平均年限 | ${dm.avgTenure||'-'} |\n| 团队规模 | ${dm.teamScale||'-'} |\n\n---\n\n## 能力差距矩阵（CASK）\n\n| # | 分类 | 能力项 | 当前水平 | 期望水平 | 核心差距 |\n|---|------|--------|----------|----------|----------|\n${gt}\n\n---\n\n## 典型行为模式\n\n${bl}\n\n---\n\n## 学习准备度\n\n- **学习动机**：${lr.motivation||'-'}\n- **学习偏好**：${lr.preference||'-'}\n- **主要障碍**：${lr.barrier||'-'}\n\n---\n\n*本报告由 Red House 训战设计平台自动生成，供内部使用*\n`;
+  const blob = new Blob([md],{type:'text/markdown;charset=utf-8'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`学员画像_${now.replace(/\//g,'-')}.md`; a.click(); URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════════
+// 任务 1·2·2  场景萃取 (Scenario Extraction)
+// 高频典型工作场景萃取
+// ════════════════════════════════════════════
+
+const SE_DATA_KEY = 'rh_se_data_v1';
+const SE_RESULT_KEY = 'rh_se_result_v1';
+function loadSEData() { try { return JSON.parse(localStorage.getItem(SE_DATA_KEY)||'{}'); } catch(e) { return {}; } }
+function saveSEData(d) { localStorage.setItem(SE_DATA_KEY, JSON.stringify(d)); }
+function loadSEResult() { try { return JSON.parse(localStorage.getItem(SE_RESULT_KEY)||'null'); } catch(e) { return null; } }
+function saveSEResult(r) { r.savedAt = new Date().toISOString(); localStorage.setItem(SE_RESULT_KEY, JSON.stringify(r)); const p = projects.find(x => x.id === currentId); if (p) { p.scenarios = r; saveProjects(); } }
+
+function getSEContext() { return { ...getLPContext(), learnerProfile: loadLPResult() }; }
+function buildSEContextBadges(ctx) {
+  const tags = [];
+  if (ctx.industry) tags.push(ctx.industry);
+  if (ctx.bimGoal) tags.push(ctx.bimGoal);
+  if (ctx.learnerProfile) tags.push(ctx.learnerProfile.summary);
+  if (!tags.length) tags.push('暂无上游数据，可直接填写');
+  return tags.map(t => `<span class="ctx-tag">${esc(t)}</span>`).join('');
+}
+
+function renderScenarioExtract() {
+  const ctx = getSEContext(); const saved = loadSEData();
+  return `
+<div class="bim-workspace">
+  <div class="ws-context-bar">${buildSEContextBadges(ctx)}</div>
+  <div class="ws-section">
+    <div class="ws-section-title">① 场景信息</div>
+    <div class="ws-section-desc">描述学员日常工作中的典型场景需求，帮助 AI 萃取高频关键场景。</div>
+    <div class="pr-input-grid">
+      <div class="pr-input-card" style="grid-column:span 2"><div class="pr-input-label"><span class="pr-input-num">1</span>核心业务流程/关键任务</div>
+        <textarea id="se-process" rows="3" placeholder="例：客户拜访→需求分析→方案呈现→商务谈判→签约交付"
+          style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);resize:vertical;outline:none">${esc(saved.process||'')}</textarea></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">2</span>期望场景数</div>
+        <select id="se-count" style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);outline:none">
+          <option value="4" ${saved.count==='4'?'selected':''}>4 个场景</option>
+          <option value="6" ${(saved.count==='6'||!saved.count)?'selected':''}>6 个场景</option>
+          <option value="8" ${saved.count==='8'?'selected':''}>8 个场景</option></select></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">3</span>场景侧重</div>
+        <select id="se-focus" style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);outline:none">
+          <option value="balanced" ${saved.focus==='balanced'||!saved.focus?'selected':''}>均衡覆盖</option>
+          <option value="client" ${saved.focus==='client'?'selected':''}>客户交互</option>
+          <option value="team" ${saved.focus==='team'?'selected':''}>团队管理</option>
+          <option value="strategy" ${saved.focus==='strategy'?'selected':''}>战略决策</option></select></div>
+    </div>
+  </div>
+  <div class="ws-section">
+    <div class="ws-section-title">② AI 场景萃取</div>
+    <button class="si-run-btn" id="se-run-btn" onclick="runSEAI()"><span class="btn-label">🔍 萃取典型场景</span></button>
+    <div class="si-loading" id="se-loading" style="display:none">
+      <div class="si-step" id="se-step-0">📋 分析业务流程与学员画像…</div>
+      <div class="si-step" id="se-step-1">🧠 识别关键决策节点…</div>
+      <div class="si-step" id="se-step-2">📊 萃取高频典型场景…</div>
+      <div class="si-step" id="se-step-3">✅ 生成场景卡片…</div></div>
+  </div>
+  <div class="ws-section" id="se-output-section">
+    <div class="ws-section-title">③ 典型场景卡片</div>
+    <div id="se-result-area"></div></div>
+</div>`;
+}
+
+function buildSEPrompt(data, ctx) {
+  const lp = ctx.learnerProfile||{};
+  const gaps = (lp.competencyGap||[]).map(g => `${g.competency}(${g.category})`).join('、');
+  return `你是资深训战课程设计师，擅长用关键事件法萃取工作场景。请萃取高频典型场景。
+
+## 输入
+- 画像概要：${lp.summary||'未提供'}
+- 核心能力差距：${gaps||'未提供'}
+- 典型行为：${(lp.behaviorPatterns||[]).map(b=>b.pattern).join('、')||'未提供'}
+- 行业：${ctx.industry||'未提供'}
+- 业务目标：${ctx.bimGoal||ctx.goal||'未提供'}
+- BIM KRA：${(ctx.kras||[]).map(k=>k.name).join('、')||'未提供'}
+- 核心流程：${data.process||'未提供'}
+- 场景数：${data.count||6}，侧重：${data.focus==='client'?'客户交互':data.focus==='team'?'团队管理':data.focus==='strategy'?'战略决策':'均衡'}
+
+## 输出（严格JSON）
+{"summary":"萃取总结(30字内)","scenarios":[{"name":"场景名(8字内)","trigger":"触发条件(20字内)","situation":"情境描述(60字内)","challenge":"核心挑战(40字内)","keyBehavior":"成功关键行为(50字内)","commonMistake":"常见错误(40字内)","linkedCompetency":["能力项"],"complexity":"低/中/高","frequency":"高/中/低频"}]}
+
+要求：${data.count||6}个场景，覆盖不同复杂度频次，与能力差距和KRA关联，challenge和keyBehavior具体可操作。`;
+}
+
+function fallbackSE(data, ctx) {
+  const count = parseInt(data.count)||6;
+  const pool = [
+    {n:'客户异议处理',t:'客户对方案/价格提出异议',s:'客户在方案呈现阶段对关键条款或价格表示不满，学员需维护利润同时保持关系',c:'平衡客户需求与公司利益的谈判',kb:'先倾听确认异议本质，用价值论证替代价格让步',m:'直接降价或回避问题',comp:['业务洞察','沟通表达'],cx:'高',fr:'高'},
+    {n:'团队绩效面谈',t:'季度/年度绩效面谈',s:'需对下属做绩效反馈面谈，含绩效不达标成员，平衡激励与改进',c:'直面绩效不佳的下属给出改进方向',kb:'用事实数据开场，聚焦行为而非个人，共同制定改进计划',m:'含糊其辞或过于严厉导致对立',comp:['团队辅导','沟通表达'],cx:'高',fr:'中'},
+    {n:'跨部门资源协调',t:'需要跨部门推进项目',s:'需要其他部门配合但对方推诿，影响项目进度',c:'在无直接管理权限下推动协作',kb:'明确共同利益点，建立双赢方案，必要时升级',m:'反复沟通无果后放弃或直接投诉',comp:['沟通表达','变革适应'],cx:'中',fr:'高'},
+    {n:'战略目标拆解',t:'接收上级战略目标后',s:'上级下达新战略目标需转化为可执行计划，团队理解不一',c:'将抽象战略转化为具体可执行行动计划',kb:'逐层分解目标到个人，对齐理解，建立检查机制',m:'直接转发上级要求不做拆解',comp:['目标拆解','业务洞察'],cx:'高',fr:'中'},
+    {n:'新业务机会评估',t:'发现潜在新业务机会',s:'市场出现新机会但资源有限，需在多个机会中做优先级判断',c:'在不确定性下快速准确判断',kb:'构建评估框架，快速验证关键假设',m:'凭直觉决定或过度分析错失时机',comp:['业务洞察','客户导向'],cx:'高',fr:'低'},
+    {n:'团队冲突化解',t:'团队成员间出现冲突',s:'两位核心成员因工作方式或利益分配产生严重分歧',c:'保持凝聚力同时公正处理冲突',kb:'分别倾听双方，找共同利益基点，引导达成共识',m:'回避冲突或偏袒一方',comp:['团队辅导','变革适应'],cx:'中',fr:'中'},
+    {n:'客户需求洞察',t:'面对客户表面需求',s:'客户提出具体功能需求，需挖掘背后真实痛点和潜在需求',c:'穿透表面需求发现深层价值诉求',kb:'通过追问和观察识别隐性需求，引导关注价值',m:'直接按客户要求提供方案',comp:['客户导向','业务洞察'],cx:'中',fr:'高'},
+    {n:'变革推进动员',t:'推行组织/流程变革',s:'推行新流程但团队有抵触情绪担心增加工作量',c:'说服团队接受变革并主动参与',kb:'阐明变革价值和个人收益，建立试点标杆，渐进推广',m:'强制推行或因阻力放弃',comp:['变革适应','团队辅导'],cx:'高',fr:'低'}
+  ];
+  return { summary:`基于${ctx.industry||'该行业'}工作流程萃取${count}个典型场景`, scenarios: pool.slice(0,count).map(s=>({name:s.n,trigger:s.t,situation:s.s,challenge:s.c,keyBehavior:s.kb,commonMistake:s.m,linkedCompetency:s.comp,complexity:s.cx,frequency:s.fr})) };
+}
+
+async function runSEAI() {
+  const runBtn = document.getElementById('se-run-btn');
+  const loading = document.getElementById('se-loading');
+  const resultArea = document.getElementById('se-result-area');
+  const outputSec = document.getElementById('se-output-section');
+  const data = { process: document.getElementById('se-process').value.trim(), count: document.getElementById('se-count').value, focus: document.getElementById('se-focus').value };
+  saveSEData(data);
+  runBtn.disabled = true; runBtn.querySelector('.btn-label').textContent = '⏳ 萃取中…';
+  loading.style.display = 'block'; resultArea.innerHTML = '';
+  const ctx = getSEContext();
+  try {
+    const steps = [0,1,2,3].map(i => document.getElementById(`se-step-${i}`));
+    steps[0].classList.add('active'); await sleep(600);
+    let result;
+    if (typeof callAI === 'function') {
+      steps[0].classList.replace('active','done'); steps[1].classList.add('active');
+      const raw = await callAI(buildSEPrompt(data, ctx));
+      steps[1].classList.replace('active','done'); steps[2].classList.add('active');
+      await sleep(400); try { result = JSON.parse(raw); } catch(e) { result = null; }
+    }
+    if (!result) { steps[2].classList.replace('active','done'); steps[3].classList.add('active'); result = fallbackSE(data, ctx); await sleep(300); }
+    steps[3].classList.replace('active','done');
+    saveSEResult(result); renderSEResult(result); outputSec.classList.add('lit'); saveWorkspace();
+  } catch(e) { showToast('分析失败：'+e.message); const result = fallbackSE(data, ctx); saveSEResult(result); renderSEResult(result); }
+  loading.style.display = 'none'; runBtn.disabled = false; runBtn.querySelector('.btn-label').textContent = '✓ 重新萃取';
+}
+
+function renderSEResult(result) {
+  const area = document.getElementById('se-result-area');
+  if (!area) return;
+  window._seCurrentResult = result;
+  const cards = (result.scenarios||[]).map((s,i) => {
+    const cxCss = s.complexity==='高'?'background:rgba(239,68,68,0.15);color:#f87171':s.complexity==='中'?'background:rgba(245,158,11,0.15);color:#fbbf24':'background:rgba(16,185,129,0.15);color:#34d399';
+    const frCss = s.frequency==='高频'?'background:rgba(239,68,68,0.15);color:#f87171':s.frequency==='中频'?'background:rgba(245,158,11,0.15);color:#fbbf24':'background:rgba(16,185,129,0.15);color:#34d399';
+    const compTags = (s.linkedCompetency||[]).map(c=>`<span style="font-size:10px;padding:2px 6px;background:rgba(96,165,250,0.12);color:#60a5fa;border-radius:4px">${esc(c)}</span>`).join(' ');
+    return `<div style="background:var(--slate-800);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px"><span style="width:24px;height:24px;background:var(--red-700);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">${i+1}</span><strong style="font-size:14px;color:var(--white)">${esc(s.name)}</strong></div><div style="display:flex;gap:6px"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;${cxCss}">${esc(s.complexity)}</span><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;${frCss}">${esc(s.frequency)}</span></div></div><div style="margin-bottom:4px"><span style="font-size:11px;color:var(--slate-500)">触发：</span><span style="font-size:12.5px;color:var(--slate-200)">${esc(s.trigger)}</span></div><div style="margin-bottom:4px"><span style="font-size:11px;color:var(--slate-500)">情境：</span><span style="font-size:12.5px;color:var(--slate-300)">${esc(s.situation)}</span></div><div style="margin-bottom:4px"><span style="font-size:11px;color:var(--amber-400)">⚡挑战：</span><span style="font-size:12.5px">${esc(s.challenge)}</span></div><div style="margin-bottom:4px"><span style="font-size:11px;color:var(--emerald-400)">✅关键行为：</span><span style="font-size:12.5px">${esc(s.keyBehavior)}</span></div><div style="margin-bottom:8px"><span style="font-size:11px;color:var(--red-400)">❌常见错误：</span><span style="font-size:12.5px;color:var(--slate-400)">${esc(s.commonMistake)}</span></div><div style="display:flex;gap:4px;flex-wrap:wrap">${compTags}</div></div>`;
+  }).join('');
+  area.innerHTML = `
+<div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:10px;padding:14px 18px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:var(--red-400);letter-spacing:1px;margin-bottom:4px">萃取概要</div><div style="font-size:14px;font-weight:700;color:var(--white)">${esc(result.summary)}</div><div style="font-size:12px;color:var(--slate-400);margin-top:4px">共 ${(result.scenarios||[]).length} 个场景</div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px;margin-bottom:16px">${cards}</div>
+<div style="display:flex;gap:10px;margin-top:8px"><button class="btn-sm btn-red" onclick="downloadSEReport()">📥 下载报告</button></div>`;
+}
+
+function restoreSEResult() {
+  const result = loadSEResult(); if (!result||!result.scenarios) return;
+  renderSEResult(result); document.getElementById('se-output-section').classList.add('lit');
+  const b = document.getElementById('se-run-btn'); if (b) b.querySelector('.btn-label').textContent = '✓ 重新萃取';
+}
+
+function downloadSEReport() {
+  const result = window._seCurrentResult||loadSEResult();
+  if (!result) { showToast('请先生成场景萃取'); return; }
+  const now = new Date().toLocaleDateString('zh-CN');
+  const sl = (result.scenarios||[]).map((s,i)=>`### 场景${i+1}：${s.name}\n\n| 维度 | 内容 |\n|------|------|\n| 触发条件 | ${s.trigger} |\n| 复杂度 | ${s.complexity} |\n| 频次 | ${s.frequency} |\n\n**情境：** ${s.situation}\n\n- ⚡ **核心挑战：** ${s.challenge}\n- ✅ **关键行为：** ${s.keyBehavior}\n- ❌ **常见错误：** ${s.commonMistake}\n- 🔗 **关联能力：** ${(s.linkedCompetency||[]).join('、')}`).join('\n\n---\n\n');
+  const md = `# 典型场景萃取报告\n> 生成日期：${now}  |  Red House 训战设计平台\n\n---\n\n## 概要\n**${result.summary}**\n\n共 ${(result.scenarios||[]).length} 个场景。\n\n---\n\n${sl}\n\n---\n\n*本报告由 Red House 训战设计平台自动生成*\n`;
+  const blob = new Blob([md],{type:'text/markdown;charset=utf-8'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`场景萃取_${now.replace(/\//g,'-')}.md`; a.click(); URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════════
+// 任务 1·2·3  行为标准 CASK (Behavior Standard)
+// 高绩效行为清单：基于场景推导 CASK 行为标准
+// ════════════════════════════════════════════
+
+const BS_DATA_KEY = 'rh_bs_data_v1';
+const BS_RESULT_KEY = 'rh_bs_result_v1';
+function loadBSData() { try { return JSON.parse(localStorage.getItem(BS_DATA_KEY)||'{}'); } catch(e) { return {}; } }
+function saveBSData(d) { localStorage.setItem(BS_DATA_KEY, JSON.stringify(d)); }
+function loadBSResult() { try { return JSON.parse(localStorage.getItem(BS_RESULT_KEY)||'null'); } catch(e) { return null; } }
+function saveBSResult(r) { r.savedAt = new Date().toISOString(); localStorage.setItem(BS_RESULT_KEY, JSON.stringify(r)); const p = projects.find(x => x.id === currentId); if (p) { p.behaviorStandard = r; saveProjects(); } }
+
+function getBSContext() { return { ...getSEContext(), scenarios: loadSEResult() }; }
+function buildBSContextBadges(ctx) {
+  const se = ctx.scenarios||{};
+  const tags = [];
+  if (se.summary) tags.push(se.summary);
+  (se.scenarios||[]).slice(0,3).forEach(s => tags.push(s.name));
+  if (!tags.length) tags.push('暂无上游数据，可直接填写');
+  return tags.map(t => `<span class="ctx-tag">${esc(t)}</span>`).join('');
+}
+
+function renderBehaviorStandard() {
+  const ctx = getBSContext(); const saved = loadBSData();
+  return `
+<div class="bim-workspace">
+  <div class="ws-context-bar">${buildBSContextBadges(ctx)}</div>
+  <div class="ws-section">
+    <div class="ws-section-title">① 补充信息</div>
+    <div class="ws-section-desc">AI 将基于画像和场景自动推导行为标准，此处可补充额外要求。</div>
+    <div class="pr-input-grid">
+      <div class="pr-input-card" style="grid-column:span 2"><div class="pr-input-label"><span class="pr-input-num">1</span>企业价值观/行为准则（可选）</div>
+        <textarea id="bs-values" rows="2" placeholder="例：客户至上、拥抱变化、团队合作、追求卓越"
+          style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);resize:vertical;outline:none">${esc(saved.values||'')}</textarea></div>
+      <div class="pr-input-card"><div class="pr-input-label"><span class="pr-input-num">2</span>行为颗粒度</div>
+        <select id="bs-granularity" style="width:100%;padding:8px 12px;font-size:13px;background:var(--slate-800);border:1px solid rgba(255,255,255,0.08);border-radius:8px;color:var(--slate-200);outline:none">
+          <option value="standard" ${saved.granularity==='standard'||!saved.granularity?'selected':''}>标准（行为要点）</option>
+          <option value="detailed" ${saved.granularity==='detailed'?'selected':''}>精细（含话术/动作）</option></select></div>
+    </div>
+  </div>
+  <div class="ws-section">
+    <div class="ws-section-title">② AI 推导行为标准</div>
+    <button class="si-run-btn" id="bs-run-btn" onclick="runBSAI()"><span class="btn-label">🔍 生成行为标准</span></button>
+    <div class="si-loading" id="bs-loading" style="display:none">
+      <div class="si-step" id="bs-step-0">📋 汇总场景与能力差距…</div>
+      <div class="si-step" id="bs-step-1">🧠 推导 CASK 行为标准…</div>
+      <div class="si-step" id="bs-step-2">📊 生成行为评估矩阵…</div>
+      <div class="si-step" id="bs-step-3">✅ 产出完整行为清单…</div></div>
+  </div>
+  <div class="ws-section" id="bs-output-section">
+    <div class="ws-section-title">③ CASK 行为标准清单</div>
+    <div id="bs-result-area"></div></div>
+</div>`;
+}
+
+function buildBSPrompt(data, ctx) {
+  const lp = ctx.learnerProfile||{};
+  const se = ctx.scenarios||{};
+  const scList = (se.scenarios||[]).map((s,i)=>`场景${i+1}：${s.name}—挑战：${s.challenge}，关键行为：${s.keyBehavior}`).join('\n');
+  const gaps = (lp.competencyGap||[]).map(g=>`${g.competency}(${g.category})：${g.gapDesc}`).join('\n');
+  return `你是资深人才发展顾问和行为标准设计专家。请推导 CASK 高绩效行为标准清单。
+
+## 输入
+### 能力差距
+${gaps||'未提供'}
+
+### 典型场景
+${scList||'未提供'}
+
+### 补充
+- 价值观：${data.values||'未提供'}
+- 颗粒度：${data.granularity==='detailed'?'精细（含话术/动作）':'标准（行为要点）'}
+
+## 输出（严格JSON）
+{"summary":"总结(30字内)","cask":[{"category":"C","categoryName":"认知","behaviors":[{"name":"行为名(10字内)","description":"描述(40字内)","scenarios":["关联场景"],"observable":"可观察指标(30字内)"}]}]}
+
+CASK四分类必须全含：C认知、A态度、S技能、K知识。每类3-5个行为项，每个关联至少1个场景，observable具体可衡量。${data.granularity==='detailed'?'description和observable含具体话术或动作步骤。':''}`;
+}
+
+function fallbackBS(data, ctx) {
+  const se = ctx.scenarios||{};
+  const sn = (se.scenarios||[]).map(s=>s.name);
+  const s = sn.length?sn:['客户异议处理','团队绩效面谈','跨部门协调','战略目标拆解'];
+  return {
+    summary: '基于场景萃取构建 CASK 四维高绩效行为标准',
+    cask: [
+      { category:'C', categoryName:'认知（思维模式）', behaviors:[
+        {name:'数据驱动思维',description:'面对决策时优先收集分析数据而非凭经验直觉',scenarios:s.slice(0,2),observable:'决策前展示至少2个数据支撑点'},
+        {name:'系统性分析',description:'将复杂问题拆解为结构化子问题逐层分析因果',scenarios:[s[0],s[3]],observable:'能画出问题拆解树或因果链'},
+        {name:'客户价值思维',description:'从客户视角思考问题关注价值交付而非内部流程',scenarios:s.slice(0,2),observable:'沟通中能清晰陈述客户获得的价值'}
+      ]},
+      { category:'A', categoryName:'态度（价值观）', behaviors:[
+        {name:'主动担当',description:'面对困难和不确定性时主动承担责任不推诿',scenarios:[s[2]],observable:'问题出现时第一个提出解决方案'},
+        {name:'成长型思维',description:'将挑战视为成长机会从失败中提取学习',scenarios:s.slice(1,3),observable:'面对失败后总结3条以上改进措施'},
+        {name:'协作共赢',description:'主动寻求跨部门合作关注整体目标',scenarios:[s[2]],observable:'每月至少发起1次跨部门协作行动'}
+      ]},
+      { category:'S', categoryName:'技能（操作能力）', behaviors:[
+        {name:'教练式辅导',description:'通过提问引导下属自主思考而非直接给答案',scenarios:[s[1]],observable:'辅导对话中提问占比超过60%'},
+        {name:'高效沟通',description:'结构化表达先结论后依据确保信息有效传达',scenarios:s.slice(0,3),observable:'汇报能在2分钟内讲清核心观点'},
+        {name:'冲突调解',description:'面对冲突保持中立引导双方找共同利益点',scenarios:[s[1]||'团队冲突'],observable:'30分钟内促成双方达成共识'},
+        {name:'目标拆解',description:'将宏观目标转化为可执行里程碑和行动计划',scenarios:[s[3]],observable:'目标下达48小时内输出拆解方案'}
+      ]},
+      { category:'K', categoryName:'知识（专业知识）', behaviors:[
+        {name:'行业洞察',description:'持续关注行业趋势和竞品动态分析对业务影响',scenarios:[s[0]],observable:'能引用至少2个行业案例支持分析'},
+        {name:'产品深度理解',description:'全面掌握产品价值主张和差异化优势',scenarios:[s[0]],observable:'能准确回答客户关于产品差异的3个问题'},
+        {name:'管理工具应用',description:'熟练运用绩效管理、项目管理等工具提升效能',scenarios:[s[1],s[3]],observable:'团队使用统一工具进行目标追踪'}
+      ]}
+    ]
+  };
+}
+
+async function runBSAI() {
+  const runBtn = document.getElementById('bs-run-btn');
+  const loading = document.getElementById('bs-loading');
+  const resultArea = document.getElementById('bs-result-area');
+  const outputSec = document.getElementById('bs-output-section');
+  const data = { values: document.getElementById('bs-values').value.trim(), granularity: document.getElementById('bs-granularity').value };
+  saveBSData(data);
+  runBtn.disabled = true; runBtn.querySelector('.btn-label').textContent = '⏳ 生成中…';
+  loading.style.display = 'block'; resultArea.innerHTML = '';
+  const ctx = getBSContext();
+  try {
+    const steps = [0,1,2,3].map(i => document.getElementById(`bs-step-${i}`));
+    steps[0].classList.add('active'); await sleep(600);
+    let result;
+    if (typeof callAI === 'function') {
+      steps[0].classList.replace('active','done'); steps[1].classList.add('active');
+      const raw = await callAI(buildBSPrompt(data, ctx));
+      steps[1].classList.replace('active','done'); steps[2].classList.add('active');
+      await sleep(400); try { result = JSON.parse(raw); } catch(e) { result = null; }
+    }
+    if (!result) { steps[2].classList.replace('active','done'); steps[3].classList.add('active'); result = fallbackBS(data, ctx); await sleep(300); }
+    steps[3].classList.replace('active','done');
+    saveBSResult(result); renderBSResult(result); outputSec.classList.add('lit'); saveWorkspace();
+  } catch(e) { showToast('分析失败：'+e.message); const result = fallbackBS(data, ctx); saveBSResult(result); renderBSResult(result); }
+  loading.style.display = 'none'; runBtn.disabled = false; runBtn.querySelector('.btn-label').textContent = '✓ 重新生成';
+}
+
+function renderBSResult(result) {
+  const area = document.getElementById('bs-result-area');
+  if (!area) return;
+  window._bsCurrentResult = result;
+  const catColors = {C:'#60a5fa',A:'#f472b6',S:'#34d399',K:'#fbbf24'};
+  const catIcons = {C:'🧠',A:'❤️',S:'🛠️',K:'📖'};
+  const caskHtml = (result.cask||[]).map(cat => {
+    const rows = (cat.behaviors||[]).map((b,i) => {
+      const scTags = (b.scenarios||[]).map(sc=>`<span style="font-size:10px;padding:1px 6px;background:rgba(255,255,255,0.05);color:var(--slate-400);border-radius:3px">${esc(sc)}</span>`).join(' ');
+      return `<div style="background:var(--slate-900);border-radius:8px;padding:12px 14px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <strong style="font-size:13px;color:var(--white)">${i+1}. ${esc(b.name)}</strong>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">${scTags}</div></div>
+        <div style="font-size:12.5px;color:var(--slate-300);margin-bottom:4px">${esc(b.description)}</div>
+        <div style="font-size:11.5px;color:var(--slate-500)">🔍 可观察指标：${esc(b.observable)}</div></div>`;
+    }).join('');
+    const color = catColors[cat.category]||'#94a3b8';
+    return `<div style="margin-bottom:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid ${color}30">
+      <span style="font-size:18px">${catIcons[cat.category]||'📌'}</span>
+      <span style="width:28px;height:28px;background:${color}20;color:${color};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900">${cat.category}</span>
+      <strong style="font-size:14px;color:${color}">${esc(cat.categoryName||cat.category)}</strong>
+      <span style="font-size:11px;color:var(--slate-600);margin-left:auto">${(cat.behaviors||[]).length} 项行为</span></div>${rows}</div>`;
+  }).join('');
+  area.innerHTML = `
+<div style="background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.2);border-radius:10px;padding:14px 18px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;color:var(--red-400);letter-spacing:1px;margin-bottom:4px">行为标准概要</div><div style="font-size:14px;font-weight:700;color:var(--white)">${esc(result.summary)}</div>
+  <div style="display:flex;gap:8px;margin-top:8px">${(result.cask||[]).map(c=>{const cl=catColors[c.category]||'#94a3b8';return `<span style="font-size:11px;font-weight:700;padding:3px 10px;background:${cl}15;color:${cl};border-radius:5px;border:1px solid ${cl}30">${c.category} ${c.categoryName||''} (${(c.behaviors||[]).length})</span>`;}).join('')}</div></div>
+${caskHtml}
+<div style="display:flex;gap:10px;margin-top:8px"><button class="btn-sm btn-red" onclick="downloadBSReport()">📥 下载报告</button></div>`;
+}
+
+function restoreBSResult() {
+  const result = loadBSResult(); if (!result||!result.cask) return;
+  renderBSResult(result); document.getElementById('bs-output-section').classList.add('lit');
+  const b = document.getElementById('bs-run-btn'); if (b) b.querySelector('.btn-label').textContent = '✓ 重新生成';
+}
+
+function downloadBSReport() {
+  const result = window._bsCurrentResult||loadBSResult();
+  if (!result) { showToast('请先生成行为标准'); return; }
+  const now = new Date().toLocaleDateString('zh-CN');
+  const caskMd = (result.cask||[]).map(cat => {
+    const rows = (cat.behaviors||[]).map((b,i)=>`| ${i+1} | ${b.name} | ${b.description} | ${(b.scenarios||[]).join('、')} | ${b.observable} |`).join('\n');
+    return `### ${cat.category} — ${cat.categoryName||cat.category}\n\n| # | 行为名称 | 行为描述 | 关联场景 | 可观察指标 |\n|---|----------|----------|----------|----------|\n${rows}`;
+  }).join('\n\n---\n\n');
+  const md = `# CASK 高绩效行为标准清单\n> 生成日期：${now}  |  Red House 训战设计平台\n\n---\n\n## 概要\n**${result.summary}**\n\n| 分类 | 行为数 |\n|------|--------|\n${(result.cask||[]).map(c=>`| ${c.category} ${c.categoryName||''} | ${(c.behaviors||[]).length} |`).join('\n')}\n\n---\n\n${caskMd}\n\n---\n\n*本报告由 Red House 训战设计平台自动生成*\n`;
+  const blob = new Blob([md],{type:'text/markdown;charset=utf-8'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`行为标准CASK_${now.replace(/\//g,'-')}.md`; a.click(); URL.revokeObjectURL(url);
+}
+
 // ────────────────────────────────────────────
 // 工具函数
 // ────────────────────────────────────────────
